@@ -1,7 +1,8 @@
 use axum::{routing::post, routing::get, Router};
+use axum::middleware::from_fn;
 use crate::infrastructure::database::DatabasePool;
 use crate::api::middleware::auth::AuthenticatedUser;
-use crate::error::AppResult;
+use crate::api::middleware::observability::trace_id_middleware;
 use axum::Json;
 use serde::Serialize;
 
@@ -38,8 +39,10 @@ impl Server {
             .route("/org/register", post(handlers::identity::register_organization))
             .route("/auth/login", post(handlers::identity::login))
             .route("/auth/whoami", get(whoami_handler))
+            .route("/telemetry/frontend", post(handlers::telemetry::handle_frontend_telemetry))
             .route("/org/users", post(handlers::identity::invite_user))
             .route("/org/groups", post(handlers::identity::create_group))
+            .layer(from_fn(trace_id_middleware))
             .with_state(self.db.clone())
     }
 }

@@ -1,0 +1,48 @@
+[package]
+name = "inventivagents"
+version = "0.1.0"
+edition = "2021"
+authors = ["InventivAgents Contributors"]
+license = "AGPL-3.0"
+description = "Enterprise-Ready Open Source Agentic AI Platform"
+
+[dependencies]
+# Async Runtime
+tokio = { version = "1.36", features = ["full"] }
+
+# Web Framework
+axum = { version = "0.7", features = ["macros"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "trace", "auth"] }
+reqwest = { version = "0.11", features = ["json"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
+uuid = { version = "1.7", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Identity & Security
+openidconnect = "3.4"
+jsonwebtoken = "9.2"
+argon2 = "0.5"
+secrecy = "0.8"
+dotenvy = "0.15"
+
+# Internationalization
+fluent = "0.16"
+intl-memoizer = "0.5"
+unic-langid = "0.9"
+
+# Error Handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Future-proofing for Milestone 4 (Coding Agent)
+bollard = "0.15"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

@@ -13,7 +13,7 @@ impl Organization {
         if name.trim().is_empty() {
             return Err(anyhow::anyhow!("Organization name cannot be empty"));
         }
-        
+
         // Simplified locale validation for TDD start
         if !["en_US", "fr_FR", "ar_AR"].contains(&default_locale) {
             return Err(anyhow::anyhow!("Unsupported locale: {}", default_locale));
@@ -42,13 +42,19 @@ mod tests {
     fn test_create_organization_invalid_name() {
         let result = Organization::new("", "en_US");
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err().to_string(), "Organization name cannot be empty");
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Organization name cannot be empty"
+        );
     }
 
     #[test]
     fn test_create_organization_unsupported_locale() {
         let result = Organization::new("My SME", "jp_JP");
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Unsupported locale"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Unsupported locale"));
     }
 }

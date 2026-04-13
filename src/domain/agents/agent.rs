@@ -45,7 +45,8 @@ mod tests {
     #[test]
     fn test_create_agent_valid() {
         let org_id = Uuid::new_v4();
-        let agent = Agent::new(org_id, "Support Agent", "Help users with tech issues", None).unwrap();
+        let agent =
+            Agent::new(org_id, "Support Agent", "Help users with tech issues", None).unwrap();
         assert_eq!(agent.name, "Support Agent");
         assert_eq!(agent.mission, "Help users with tech issues");
     }
@@ -54,6 +55,13 @@ mod tests {
     fn test_create_agent_invalid_mission() {
         let org_id = Uuid::new_v4();
         let result = Agent::new(org_id, "Lazy Agent", "", None);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_create_agent_whitespace_name_rejected() {
+        let org_id = Uuid::new_v4();
+        let result = Agent::new(org_id, "   ", "Mission text", None);
         assert!(result.is_err());
     }
 }

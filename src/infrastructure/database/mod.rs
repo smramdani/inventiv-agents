@@ -1,8 +1,9 @@
+pub mod agents;
 pub mod identity;
 
+use crate::error::AppResult;
 use sqlx::{postgres::PgPoolOptions, PgPool, Postgres, Transaction};
 use uuid::Uuid;
-use crate::error::AppResult;
 
 #[derive(Clone)]
 pub struct DatabasePool {
@@ -15,7 +16,7 @@ impl DatabasePool {
             .max_connections(10)
             .connect(url)
             .await?;
-        
+
         Ok(Self { pool })
     }
 
@@ -23,7 +24,10 @@ impl DatabasePool {
         &self.pool
     }
 
-    pub async fn set_rls_context(tx: &mut Transaction<'_, Postgres>, org_id: Uuid) -> AppResult<()> {
+    pub async fn set_rls_context(
+        tx: &mut Transaction<'_, Postgres>,
+        org_id: Uuid,
+    ) -> AppResult<()> {
         sqlx::query("SELECT set_config('app.current_org_id', $1, true)")
             .bind(org_id.to_string())
             .execute(&mut **tx)

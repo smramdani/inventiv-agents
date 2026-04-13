@@ -1,11 +1,6 @@
-use axum::{
-    extract::FromRequestParts,
-    http::request::Parts,
-    async_trait,
-    RequestPartsExt,
-};
 use crate::error::AppError;
 use crate::infrastructure::auth::jwt::{Claims, JwtService};
+use axum::{async_trait, extract::FromRequestParts, http::request::Parts, RequestPartsExt};
 use axum_extra::TypedHeader;
 use headers::authorization::Bearer;
 use headers::Authorization;
@@ -31,7 +26,8 @@ where
             .map_err(|_| AppError::Unauthorized)?;
 
         // 3. Verify token
-        let claims = jwt_service.verify_token(bearer.token())
+        let claims = jwt_service
+            .verify_token(bearer.token())
             .map_err(|_| AppError::Unauthorized)?;
 
         Ok(AuthenticatedUser(claims))

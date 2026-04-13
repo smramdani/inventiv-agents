@@ -16,7 +16,11 @@ pub struct Group {
 }
 
 impl Group {
-    pub fn new(organization_id: Uuid, name: &str, description: Option<String>) -> anyhow::Result<Self> {
+    pub fn new(
+        organization_id: Uuid,
+        name: &str,
+        description: Option<String>,
+    ) -> anyhow::Result<Self> {
         if name.trim().is_empty() {
             return Err(anyhow::anyhow!("Group name cannot be empty"));
         }

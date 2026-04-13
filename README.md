@@ -14,10 +14,11 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 - **Skills** can be easily created, used, and even shared in a B2B marketplace.
 - **Coding** tasks are executed in secure, virtualized sandboxes.
 
-## ✨ Core Features (Milestone 1)
+## ✨ Core Features
 
 - **Multi-Tenancy**: Built-in isolation for organizations using Postgres RLS.
 - **Identity & RBAC**: Advanced role management (Owner, Admin, User) with SSO (Google/GitHub/SAML) support.
+- **Registry (M3)**: Admin/Owner REST API for LLM providers, MCP/native skills, agents, and agent–skill links (`/org/providers`, `/org/skills`, `/org/agents`).
 - **Internationalization**: Native support for English, French, and Arabic.
 - **Observability**: Systematic logging, metrics, and telemetry for full execution traceability.
 - **Marketplace Ready**: Foundation for cross-organization model and skill sharing.
@@ -49,10 +50,12 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    docker compose up -d
    ```
 
-3. **Apply Migrations**:
+3. **Apply Migrations** (in order):
    ```bash
    docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/001_initial_schema_with_rls.sql
    docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/002_observability_schema.sql
+   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/003_agents_registry.sql
+   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/004_agents_registry_indexes_and_grants.sql
    ```
 
 4. **Run the Backend**:
@@ -76,6 +79,14 @@ curl -X POST http://localhost:8080/auth/login \
   -d '{"email": "admin@company.ai"}'
 ```
 
+### Register an LLM provider (Admin or Owner JWT)
+```bash
+curl -X POST http://localhost:8080/org/providers \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token_from_login>" \
+  -d '{"name": "OVH AI","base_url": "https://api.ovh.com"}'
+```
+
 ## 🤝 Contribution
 
 This project is Open Source under the **AGPL-3.0** license. We welcome contributions!
@@ -85,4 +96,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 1 in progress.
+**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; engine and cockpit next per plan.

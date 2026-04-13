@@ -25,7 +25,9 @@ pub async fn trace_id_middleware(mut request: Request<Body>, next: Next) -> Resp
 
     // 4. Set the header in the response for frontend correlation
     if let Ok(value) = trace_id.to_string().parse() {
-        response.headers_mut().insert(HeaderName::from_static("x-trace-id"), value);
+        response
+            .headers_mut()
+            .insert(HeaderName::from_static("x-trace-id"), value);
     }
 
     response

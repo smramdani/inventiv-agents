@@ -15,9 +15,11 @@ impl LlmProvider {
         if name.trim().is_empty() {
             return Err(anyhow::anyhow!("Provider name cannot be empty"));
         }
-        
+
         if !base_url.starts_with("http") {
-            return Err(anyhow::anyhow!("Invalid base URL: must start with http/https"));
+            return Err(anyhow::anyhow!(
+                "Invalid base URL: must start with http/https"
+            ));
         }
 
         Ok(Self {
@@ -46,6 +48,20 @@ mod tests {
     fn test_create_provider_invalid_url() {
         let org_id = Uuid::new_v4();
         let result = LlmProvider::new(org_id, "Bad Provider", "ftp://invalid");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_create_provider_invalid_url_without_scheme() {
+        let org_id = Uuid::new_v4();
+        let result = LlmProvider::new(org_id, "Bad", "example.com");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_create_provider_whitespace_name_rejected() {
+        let org_id = Uuid::new_v4();
+        let result = LlmProvider::new(org_id, "   ", "https://api.example.com");
         assert!(result.is_err());
     }
 }

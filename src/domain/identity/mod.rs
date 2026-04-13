@@ -1,3 +1,3 @@
+pub mod group;
 pub mod organization;
 pub mod user;
-pub mod group;

@@ -1,7 +1,5 @@
 use sqlx::PgPool;
 use uuid::Uuid;
-use chrono::Utc;
-use crate::infrastructure::database::DatabasePool;
 
 pub struct TelemetryRepository;
 
@@ -15,7 +13,7 @@ impl TelemetryRepository {
         message: &str,
         context: serde_json::Value,
     ) -> anyhow::Result<()> {
-        // We use a separate pool or raw query here to avoid RLS 
+        // We use a separate pool or raw query here to avoid RLS
         // issues during the logging of the logging system itself.
         sqlx::query(
             "INSERT INTO telemetry_logs (organization_id, trace_id, level, source, message, context) 
@@ -29,7 +27,7 @@ impl TelemetryRepository {
         .bind(context)
         .execute(pool)
         .await?;
-        
+
         Ok(())
     }
 }

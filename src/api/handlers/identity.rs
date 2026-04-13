@@ -1,15 +1,15 @@
+use crate::api::middleware::auth::AuthenticatedUser;
+use crate::domain::identity::{
+    group::Group,
+    organization::Organization,
+    user::{User, UserRole},
+};
+use crate::error::{AppError, AppResult};
+use crate::infrastructure::auth::jwt::JwtService;
+use crate::infrastructure::database::identity::IdentityRepository;
+use crate::infrastructure::database::DatabasePool;
 use axum::{extract::State, Json};
 use serde::{Deserialize, Serialize};
-use crate::infrastructure::database::DatabasePool;
-use crate::infrastructure::database::identity::IdentityRepository;
-use crate::domain::identity::{
-    organization::Organization, 
-    user::{User, UserRole},
-    group::Group
-};
-use crate::infrastructure::auth::jwt::JwtService;
-use crate::api::middleware::auth::AuthenticatedUser;
-use crate::error::{AppError, AppResult};
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -53,7 +53,7 @@ pub async fn register_organization(
 ) -> AppResult<Json<RegisterOrgResponse>> {
     let org_domain = Organization::new(&payload.name, &payload.locale)
         .map_err(|e| AppError::Validation(e.to_string()))?;
-    
+
     let user_domain = User::new(&org_domain, &payload.admin_email, UserRole::Owner)
         .map_err(|e| AppError::Validation(e.to_string()))?;
 
@@ -66,13 +66,15 @@ pub async fn register_organization(
         .execute(&mut *tx)
         .await?;
 
-    sqlx::query("INSERT INTO users (id, organization_id, email, role) VALUES ($1, $2, $3, $4::user_role)")
-        .bind(user_domain.id)
-        .bind(user_domain.organization_id)
-        .bind(&user_domain.email)
-        .bind("Owner")
-        .execute(&mut *tx)
-        .await?;
+    sqlx::query(
+        "INSERT INTO users (id, organization_id, email, role) VALUES ($1, $2, $3, $4::user_role)",
+    )
+    .bind(user_domain.id)
+    .bind(user_domain.organization_id)
+    .bind(&user_domain.email)
+    .bind("Owner")
+    .execute(&mut *tx)
+    .await?;
 
     tx.commit().await?;
 
@@ -86,11 +88,12 @@ pub async fn login(
     State(db): State<DatabasePool>,
     Json(payload): Json<LoginRequest>,
 ) -> AppResult<Json<LoginResponse>> {
-    let user: (Uuid, Uuid, String) = sqlx::query_as("SELECT id, organization_id, role::text FROM users WHERE email = $1")
-        .bind(&payload.email)
-        .fetch_optional(db.get_pool())
-        .await?
-        .ok_or(AppError::Unauthorized)?;
+    let user: (Uuid, Uuid, String) =
+        sqlx::query_as("SELECT id, organization_id, role::text FROM users WHERE email = $1")
+            .bind(&payload.email)
+            .fetch_optional(db.get_pool())
+            .await?
+            .ok_or(AppError::Unauthorized)?;
 
     let role = match user.2.as_str() {
         "Owner" => UserRole::Owner,
@@ -100,8 +103,9 @@ pub async fn login(
 
     let jwt_secret = std::env::var("JWT_SECRET").unwrap_or_else(|_| "secret".into());
     let jwt_service = JwtService::new(&jwt_secret);
-    
-    let token = jwt_service.create_token(user.0, user.1, role)
+
+    let token = jwt_service
+        .create_token(user.0, user.1, role)
         .map_err(|_| AppError::Internal)?;
 
     Ok(Json(LoginResponse { token }))
@@ -119,7 +123,11 @@ pub async fn invite_user(
 
     // 2. Domain logic
     // We mock the org for validation purposes
-    let mock_org = Organization { id: claims.org_id, name: "N/A".into(), default_locale: "en_US".into() };
+    let mock_org = Organization {
+        id: claims.org_id,
+        name: "N/A".into(),
+        default_locale: "en_US".into(),
+    };
     let user_domain = User::new(&mock_org, &payload.email, payload.role)
         .map_err(|e| AppError::Validation(e.to_string()))?;
 

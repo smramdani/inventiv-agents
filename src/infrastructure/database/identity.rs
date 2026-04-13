@@ -1,9 +1,9 @@
-use sqlx::{Postgres, Transaction};
-use uuid::Uuid;
 use crate::domain::identity::group::{Group, GroupMemberRole};
 use crate::domain::identity::user::{User, UserRole};
-use crate::infrastructure::database::DatabasePool;
 use crate::error::AppResult;
+use crate::infrastructure::database::DatabasePool;
+use sqlx::{Postgres, Transaction};
+use uuid::Uuid;
 
 pub struct IdentityRepository;
 
@@ -14,15 +14,17 @@ impl IdentityRepository {
         group: &Group,
     ) -> AppResult<()> {
         DatabasePool::set_rls_context(tx, org_id).await?;
-        
-        sqlx::query("INSERT INTO groups (id, organization_id, name, description) VALUES ($1, $2, $3, $4)")
-            .bind(group.id)
-            .bind(org_id)
-            .bind(&group.name)
-            .bind(&group.description)
-            .execute(&mut **tx)
-            .await?;
-        
+
+        sqlx::query(
+            "INSERT INTO groups (id, organization_id, name, description) VALUES ($1, $2, $3, $4)",
+        )
+        .bind(group.id)
+        .bind(org_id)
+        .bind(&group.name)
+        .bind(&group.description)
+        .execute(&mut **tx)
+        .await?;
+
         Ok(())
     }
 
@@ -34,7 +36,7 @@ impl IdentityRepository {
         role: GroupMemberRole,
     ) -> AppResult<()> {
         DatabasePool::set_rls_context(tx, org_id).await?;
-        
+
         let role_str = match role {
             GroupMemberRole::Member => "Member",
             GroupMemberRole::Organizer => "Organizer",
@@ -46,7 +48,7 @@ impl IdentityRepository {
             .bind(role_str)
             .execute(&mut **tx)
             .await?;
-        
+
         Ok(())
     }
 
@@ -56,7 +58,7 @@ impl IdentityRepository {
         user: &User,
     ) -> AppResult<()> {
         DatabasePool::set_rls_context(tx, org_id).await?;
-        
+
         let role_str = match user.role {
             UserRole::Owner => "Owner",
             UserRole::Admin => "Admin",
@@ -70,7 +72,7 @@ impl IdentityRepository {
             .bind(role_str)
             .execute(&mut **tx)
             .await?;
-        
+
         Ok(())
     }
 }

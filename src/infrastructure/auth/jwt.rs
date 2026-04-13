@@ -1,16 +1,16 @@
+use crate::domain::identity::user::UserRole;
+use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use chrono::{Utc, Duration};
-use crate::domain::identity::user::UserRole;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: Uuid,            // User ID
-    pub org_id: Uuid,         // Organization ID for RLS
+    pub sub: Uuid,    // User ID
+    pub org_id: Uuid, // Organization ID for RLS
     pub role: UserRole,
-    pub exp: i64,             // Expiration timestamp
-    pub iat: i64,             // Issued at timestamp
+    pub exp: i64, // Expiration timestamp
+    pub iat: i64, // Issued at timestamp
 }
 
 pub struct JwtService {
@@ -26,7 +26,12 @@ impl JwtService {
         }
     }
 
-    pub fn create_token(&self, user_id: Uuid, org_id: Uuid, role: UserRole) -> anyhow::Result<String> {
+    pub fn create_token(
+        &self,
+        user_id: Uuid,
+        org_id: Uuid,
+        role: UserRole,
+    ) -> anyhow::Result<String> {
         let iat = Utc::now();
         let exp = iat + Duration::hours(24);
 

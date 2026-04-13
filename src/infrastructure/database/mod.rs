@@ -1,3 +1,5 @@
+pub mod identity;
+
 use sqlx::{postgres::PgPoolOptions, PgPool, Postgres, Transaction};
 use uuid::Uuid;
 use crate::error::AppResult;
@@ -17,13 +19,10 @@ impl DatabasePool {
         Ok(Self { pool })
     }
 
-    /// Returns a reference to the underlying pool.
     pub fn get_pool(&self) -> &PgPool {
         &self.pool
     }
 
-    /// Sets the RLS context for a transaction.
-    /// This must be called inside every transaction that interacts with organization-isolated data.
     pub async fn set_rls_context(tx: &mut Transaction<'_, Postgres>, org_id: Uuid) -> AppResult<()> {
         sqlx::query("SELECT set_config('app.current_org_id', $1, true)")
             .bind(org_id.to_string())

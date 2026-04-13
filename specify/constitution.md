@@ -58,6 +58,17 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
     - **Usage**: Practical examples of how to use the API or CLI.
     - **Contribution**: Clear guidelines on how community members can help.
 
+### XII. Spec Kit & Spec-Driven Development (SDD)
+- **SDD Lifecycle**: No code implementation shall begin without a completed Spec (Functional), Technical Plan (Architecture), and Task List (Execution) generated via Spec Kit.
+- **Sync Requirement**: Artifacts must be kept in sync with the code. If the implementation deviates from the plan, the plan must be updated and ratified first.
+- **Traceability**: Every task in the task list must link back to a User Story or a specific technical requirement in the Spec.
+
+### XIII. Agentic Hierarchy & Logic
+- **Skill**: The atomic unit of capability. Powered by MCP servers or native Rust functions.
+- **Agent**: A mission-oriented entity. It is defined by a **Mission**, a **Persona**, and a **Toolbelt** (a selection of 0..N Skills).
+- **Session**: The secure, multi-tenant execution context where a User interacts with an Agent or uses Skills directly.
+- **Reasoning Loop**: Agents must follow a structured loop (Reasoning -> Tool Selection -> Execution -> Validation -> Response).
+
 ## Tech Stack
 - **Language**: Rust (Stable)
 - **Package Manager**: `cargo`

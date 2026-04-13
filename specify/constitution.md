@@ -43,6 +43,12 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
 - **Exception Catching**: No exception should be swallowed silently. Every error must be caught, logged with context, and reported appropriately.
 - **Phase-Agnostic**: Observability is mandatory in Dev, Staging, and Production, as well as during Build and Support phases.
 
+### X. Versioning, Lifecycle & Change Management
+- **Systematic & Legible Commits**: All project changes must be committed to GitHub systematically. Commit messages must be clear, following the Conventional Commits standard (e.g., `feat:`, `fix:`, `docs:`).
+- **Semantic Versioning (SemVer)**: Releases must be versioned using Semantic Versioning (Major.Minor.Patch).
+- **Version Visibility**: The current version of both back-end and front-end must be explicitly displayed in the logs at startup and within the user interface. This is mandatory for debugging and support.
+- **Synthetic Changelog**: A clear and synthetic `CHANGELOG.md` must be maintained, summarizing all significant changes per version.
+
 ## Tech Stack
 - **Language**: Rust (Stable)
 - **Package Manager**: `cargo`

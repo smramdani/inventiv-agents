@@ -50,10 +50,17 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to create, consu
 - **US.5**: As a User, I want to login via SSO (Google/GitHub) for a seamless experience.
 - **US.6**: As a User, I want to create a Session and select specific Skills to help me with a coding task.
 - **US.7**: As a User, I want to share my agent session with my Group members to collaborate on a complex problem.
-
-### For the Developer (Observability)
+## 8. User Stories
+...
 - **US.8**: As a Developer, I want to trace a single request from the Frontend to the Backend using a TraceID to debug production issues efficiently.
 
-## 9. Open Source & License
+## 9. Change Management & Release Cycle
+- **Versioning Strategy**: Strict Semantic Versioning (SemVer) 2.0.0.
+- **Traceability**: Every release must include a synthetic `CHANGELOG.md` mapping changes to US/Milestones.
+- **Diagnostics**: Current application version (BE/FE) must be visible in logs and UI (e.g., in a "About" or "Status" section).
+- **GitHub Workflow**: Systematic, descriptive commits using Conventional Commits to automate changelog generation.
+
+## 10. Open Source & License
 - **License**: AGPL-3.0.
 - **Language**: All artifacts (Code, Docs, Spec) must be in English.
+

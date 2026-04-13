@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **README**: local development documents `make help`, simple Makefile verbs (`build`, `release`, `start`, `stop`, …), and deploy stub targets.
 - **Docker local stack**: Compose file top-level `name: inventivagents`; Postgres healthcheck uses `pg_isready` on `127.0.0.1` with correct `$$` env expansion; longer `start_period`; scripts use `DOCKER_COMPOSE` and `pg_isready -h 127.0.0.1`; `test-local-full.sh` tries `compose up --wait` then falls back; `apply-migrations.sh` refuses re-run if schema exists; `reset-local-db.sh` for clean volumes; README Docker troubleshooting and `--wait` docs; `.dockerignore` for future images.
 - **Integration tests**: `serial_test` with shared `integration_db` lock across `tests/*.rs` so parallel `cargo test` does not corrupt shared Postgres.
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Spec Kit templates**: Optional layer tags on generated tasks; checklist template requires a Constitution XIV layer section when relevant.
 - **Milestone 3 tasks**: Layer definition-of-done gate section in `specify/tasks/003_milestone_3.md` (front-end marked N/A for M3 per plan).
 - **Agents registry (Milestone 3)**: Migrations `003_agents_registry.sql` and `004_agents_registry_indexes_and_grants.sql`; domain `provider` / `skill` / `agent`; `AgentsRepository` with RLS on every path; Admin/Owner HTTP routes under `/org/providers`, `/org/skills`, `/org/agents`, and agent–skill linking; library crate `src/lib.rs` and `app_router` for integration tests; integration tests `agents_registry_rls`, `agents_api`, and corrected `identity_rls` transaction scoping for `set_config`.
+- **Local dev tooling**: `scripts/dev/lib.sh` (shared Docker/env helpers), `scripts/dev/with-env.sh` (run any command with `.env` loaded), `scripts/dev/dev.sh` (doctor, up/down, migrate/reset/ready, test, run, check, full), root `Makefile` with **simple verbs** (`build`, `release`, `start`, `stop`, `delete`, `fmt`, `lint`, `clean`, …), **`make help`** (`scripts/dev/make-help.txt` lifecycle + deploy stubs), deploy placeholder targets, and `test-local-full.sh` refactored to reuse the shared library.
 
 ## [0.1.0] - 2026-04-13
 

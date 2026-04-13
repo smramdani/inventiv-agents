@@ -1,0 +1,61 @@
+InventivAgents — Make commands (local development)
+==================================================
+
+Run from the repository root. Under the hood most targets call
+  ./scripts/dev/dev.sh
+which loads .env, manages Docker Postgres/Redis, and runs migrations where needed.
+
+Lifecycle (typical day)
+-----------------------
+  1. make env          Create .env from .env.example if missing (once per clone).
+  2. make doctor       Optional: verify Docker, Compose, .env, and Postgres.
+  3. make start        Start DB + Redis and apply migrations (best-effort if DB already exists).
+  4. make run          Start the API (foreground); use another terminal for curl/tests.
+  5. make stop         Stop containers (data kept in Docker volumes).
+  6. make delete       DESTRUCTIVE: remove volumes and recreate DB (same as reset).
+
+Simple verbs (easy to remember)
+-------------------------------
+  make build           Debug build (cargo build), with .env loaded for consistency.
+  make release         Same as: make release-build — release binary (cargo build --release).
+  make release-build   Same as release. Optional: TAG=v1.2.0 prints a git tag reminder.
+  make start           Same as: make ready — infra up + migrate_try.
+  make stop            Same as: make down — docker compose down.
+  make delete          Same as: make reset — wipes local DB volume, then up + strict migrate.
+  make test            Integration + unit tests (starts Docker if needed).
+  make test-unit       Same as: make test-lib — unit tests only, no Docker.
+  make run             API, debug profile (pass args: make run ARGS='-- --help').
+  make run-rel         API, release profile.
+  make check           fmt --check + clippy (-D warnings) + test (heavier gate).
+  make full            Strict migrate + full test suite + release build (CI-like locally).
+  make fmt             Format Rust sources (cargo fmt).
+  make lint            Clippy only (cargo clippy --all-targets -D warnings).
+  make clean           cargo clean
+
+Precise / low-level (same names as dev.sh)
+------------------------------------------
+  make env             Ensure .env exists.
+  make doctor          Diagnostics.
+  make up              Start Postgres + Redis only (no migrate).
+  make down            Stop stack.
+  make migrate         Apply SQL migrations strictly (fails if schema already present — use delete/reset).
+  make reset           delete — destroy volumes, bring stack back, migrate.
+  make ready           start — up + migrate_try (exit 2 from migrate = OK).
+  make cargo ARGS='…'  Run any cargo subcommand with .env loaded, e.g. ARGS='test --test agents_api'.
+
+Deploy (stubs — wire to your CI/CD)
+-------------------------------------
+There is no in-repo production deploy yet (constitution XV: promote immutable artifacts via pipeline).
+
+  make deploy-staging REF=latest
+  make deploy-prod    REF=v1.2.3
+
+REF defaults to "latest". These targets print guidance and succeed until you replace them with
+e.g. gh workflow run, kubectl set image, or Scaleway CLI.
+
+GNU Make note: use VAR=value (e.g. REF=abc123). There is no "make deploy prod latest" syntax;
+use make deploy-prod REF=latest instead.
+
+More help
+---------
+  ./scripts/dev/dev.sh help    — compact command list for the shell script CLI.

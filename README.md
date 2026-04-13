@@ -93,6 +93,50 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    ```
    Uses `DOCKER_COMPOSE` if set (default `docker compose`).
 
+#### Repeatable dev commands (`dev.sh` + `Makefile`)
+
+Run **`make help`** for a full lifecycle guide, simple verbs (`build`, `release`, `start`, `stop`, `delete`, …), low-level targets, and deploy stub notes.
+
+Use one entry point so every machine runs the same sequence (Docker up, optional migrations, `.env` for `cargo`):
+
+| Simple verb | What it does |
+|-------------|----------------|
+| `make build` | Debug `cargo build` (with `.env` loaded). |
+| `make release` | `cargo build --release`; optional `TAG=v1.0.0` prints a git tag hint. |
+| `make start` | Same as `make ready` — DB/Redis up + best-effort migrations. |
+| `make stop` | Same as `make down` — stop containers (keeps volumes). |
+| `make delete` | Same as `make reset` — **destroys** local DB volume, then migrates. |
+| `make test-unit` | Same as `make test-lib` — unit tests only, no Docker. |
+| `make fmt` / `make lint` | Format / Clippy only. |
+| `make clean` | `cargo clean`. |
+| `make deploy-staging` / `make deploy-prod` | Stubs (`REF=…`, default `latest`); wire to your CI/CD. |
+
+| Goal | Script | Make (equivalent) |
+|------|--------|-------------------|
+| Sanity check (Docker, Compose, `.env`, Postgres) | `./scripts/dev/dev.sh doctor` | `make doctor` |
+| Start DB + Redis | `./scripts/dev/dev.sh up` | `make up` |
+| Stop stack | `./scripts/dev/dev.sh down` | `make down` |
+| Apply migrations (strict; exit 2 if schema already exists) | `./scripts/dev/dev.sh migrate` | `make migrate` |
+| Wipe local volumes and re-migrate | `./scripts/dev/dev.sh reset` | `make reset` |
+| Up + best-effort migrate | `./scripts/dev/dev.sh ready` | `make ready` |
+| Integration + unit tests | `./scripts/dev/dev.sh test` | `make test` |
+| Unit tests only (loads `.env`; no Docker) | `./scripts/dev/dev.sh test-lib` | `make test-lib` |
+| Run API (debug) | `./scripts/dev/dev.sh run` | `make run` |
+| Run API (release) | `./scripts/dev/dev.sh run-rel` | `make run-rel` |
+| fmt + clippy + test | `./scripts/dev/dev.sh check` | `make check` |
+| Full pipeline (strict migrate + test + release build) | `./scripts/dev/dev.sh full` | `make full` |
+
+Pass arguments through to `cargo` / the binary where supported, for example:
+
+```bash
+./scripts/dev/dev.sh test -- --test agents_api
+./scripts/dev/dev.sh run -- --help
+make run ARGS='-- --help'
+make cargo ARGS='test --lib'
+```
+
+Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targets`.
+
 ### Docker troubleshooting (local)
 
 - **`Cannot connect to the Docker daemon`**: start Docker Desktop (macOS/Windows) or `sudo systemctl start docker` on Linux.

@@ -49,6 +49,15 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
 - **Version Visibility**: The current version of both back-end and front-end must be explicitly displayed in the logs at startup and within the user interface. This is mandatory for debugging and support.
 - **Synthetic Changelog**: A clear and synthetic `CHANGELOG.md` must be maintained, summarizing all significant changes per version.
 
+### XI. Project Documentation
+- **Mandatory README.md**: A clear, helpful, and accurate `README.md` must be maintained in the root directory. It must be kept up to date with every major change.
+- **README Content**: It must provide:
+    - **Purpose**: A high-level explanation of the project's goals and vision.
+    - **Features**: A comprehensive list of current and planned capabilities.
+    - **Installation**: Step-by-step instructions (Prerequisites, Setup).
+    - **Usage**: Practical examples of how to use the API or CLI.
+    - **Contribution**: Clear guidelines on how community members can help.
+
 ## Tech Stack
 - **Language**: Rust (Stable)
 - **Package Manager**: `cargo`

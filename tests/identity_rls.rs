@@ -1,3 +1,5 @@
+mod common;
+
 use dotenvy::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use uuid::Uuid;
@@ -27,12 +29,10 @@ async fn insert_org_with_context(
 #[tokio::test]
 async fn test_rls_isolation_between_orgs() -> anyhow::Result<()> {
     dotenv().ok();
-    let database_url =
-        "postgres://inventiv_app:inventiv_app_password@localhost:5432/inventiv_agents";
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(database_url)
+        .connect(&common::app_database_url())
         .await?;
 
     let org_a_id = Uuid::new_v4();

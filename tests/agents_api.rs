@@ -1,3 +1,5 @@
+mod common;
+
 use axum::body::Body;
 use axum::http::{Request, StatusCode};
 use axum::Router;
@@ -30,9 +32,7 @@ async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::R
 #[tokio::test]
 async fn test_create_provider_requires_auth() -> anyhow::Result<()> {
     dotenv().ok();
-    let database_url =
-        "postgres://inventiv_app:inventiv_app_password@localhost:5432/inventiv_agents";
-    let pool = DatabasePool::connect(database_url).await?;
+    let pool = DatabasePool::connect(&common::app_database_url()).await?;
     let app: Router = app_router(pool);
 
     let body = serde_json::json!({
@@ -53,11 +53,9 @@ async fn test_create_provider_requires_auth() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_admin_can_create_provider_via_http() -> anyhow::Result<()> {
     dotenv().ok();
-    let database_url =
-        "postgres://inventiv_app:inventiv_app_password@localhost:5432/inventiv_agents";
     let raw_pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(database_url)
+        .connect(&common::app_database_url())
         .await?;
 
     let org_id = Uuid::new_v4();
@@ -99,7 +97,7 @@ async fn test_admin_can_create_provider_via_http() -> anyhow::Result<()> {
     let jwt = JwtService::new(&jwt_secret);
     let token = jwt.create_token(admin_id, org_id, UserRole::Admin)?;
 
-    let pool = DatabasePool::connect(database_url).await?;
+    let pool = DatabasePool::connect(&common::app_database_url()).await?;
     let app: Router = app_router(pool);
 
     let body = serde_json::json!({

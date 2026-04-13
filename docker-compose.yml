@@ -1,22 +1,55 @@
+# Local stack: PostgreSQL (pgvector) + Redis.
+# Copy .env.example to .env before first run. See README for Scaleway / staging notes.
+
 services:
   db:
     image: pgvector/pgvector:pg16
-    ports:
-      - "5432:5432"
+    container_name: inventivagents-db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: inventiv_user
-      POSTGRES_PASSWORD: inventiv_password
-      POSTGRES_DB: inventiv_agents
+      POSTGRES_USER: ${POSTGRES_USER:-inventiv_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-inventiv_password}
+      POSTGRES_DB: ${POSTGRES_DB:-inventiv_agents}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\" || exit 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - inventiv
 
   redis:
     image: redis:7-alpine
+    container_name: inventivagents-redis
+    restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - inventiv
+
+networks:
+  inventiv:
+    driver: bridge
 
 volumes:
   postgres_data:
+    name: inventivagents_postgres_data
   redis_data:
+    name: inventivagents_redis_data

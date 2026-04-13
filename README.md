@@ -39,29 +39,54 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 - [GitHub CLI](https://cli.github.com/) (for contributions)
 
 ### Local Development
+
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/smramdani/inventiv-agents.git
    cd inventiv-agents
    ```
 
-2. **Start Infrastructure**:
+2. **Environment** (Compose + app read variables from a project `.env`; Compose also interpolates `${VARS}` in `docker-compose.yml`):
+   ```bash
+   cp .env.example .env
+   # Edit .env: set POSTGRES_PASSWORD and JWT_SECRET for anything beyond local-only use.
+   ```
+
+3. **Start infrastructure** (PostgreSQL **pgvector** + Redis, healthchecks, named volumes):
    ```bash
    docker compose up -d
+   docker compose ps
+   ```
+   Wait until `db` and `redis` show as **healthy** in `docker compose ps`.
+
+4. **Apply database migrations** (ordered `migrations/*.sql` via the superuser in the container):
+   ```bash
+   ./scripts/db/apply-migrations.sh
+   ```
+   Equivalent manual one-liner per file:
+   ```bash
+   docker compose exec -T db psql -U inventiv_user -d inventiv_agents -v ON_ERROR_STOP=1 < migrations/001_initial_schema_with_rls.sql
+   # … repeat for 002, 003, 004
    ```
 
-3. **Apply Migrations** (in order):
+5. **Run the API** (loads `.env` via `dotenv` in `main`):
    ```bash
-   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/001_initial_schema_with_rls.sql
-   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/002_observability_schema.sql
-   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/003_agents_registry.sql
-   docker exec -i inventivagents-db-1 psql -U inventiv_user -d inventiv_agents < migrations/004_agents_registry_indexes_and_grants.sql
-   ```
-
-4. **Run the Backend**:
-   ```bash
+   set -a && source .env && set +a   # or: export $(grep -v '^#' .env | xargs)
    cargo run
    ```
+
+6. **Run tests** (integration tests use `DATABASE_URL` from `.env`, defaulting to `127.0.0.1:5432` and the `inventiv_app` role):
+   ```bash
+   set -a && source .env && set +a
+   cargo test
+   ```
+
+### Staging / production (e.g. Scaleway)
+
+- Use **Scaleway Managed PostgreSQL** (or Serverless SQL) with TLS (`sslmode=require` in `DATABASE_URL`), private network attachment where possible, and secrets in **Scaleway Secret Manager** (or equivalent), not in the image.
+- Run the **same migration sequence** as local using a DB role that can `CREATE EXTENSION`, `CREATE ROLE`, and apply RLS policies (see `migrations/001_initial_schema_with_rls.sql`).
+- Point `DATABASE_URL` at the **`inventiv_app`**-style application user created by your migration pipeline; keep a separate superuser only for operations.
+- For containers on Scaleway **Kubernetes** or **Serverless Containers**, inject `DATABASE_URL` and `JWT_SECRET` from the secret store; do not bake credentials into the image.
 
 ## 📖 Usage
 

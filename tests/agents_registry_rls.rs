@@ -1,3 +1,5 @@
+mod common;
+
 use dotenvy::dotenv;
 use inventivagents::domain::agents::agent::Agent;
 use inventivagents::domain::agents::provider::LlmProvider;
@@ -25,11 +27,9 @@ async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::R
 #[tokio::test]
 async fn test_agents_registry_rls_isolation() -> anyhow::Result<()> {
     dotenv().ok();
-    let database_url =
-        "postgres://inventiv_app:inventiv_app_password@localhost:5432/inventiv_agents";
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(database_url)
+        .connect(&common::app_database_url())
         .await?;
 
     let org_a = Uuid::new_v4();
@@ -63,11 +63,9 @@ async fn test_agents_registry_rls_isolation() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_admin_can_create_agent_with_multiple_skills() -> anyhow::Result<()> {
     dotenv().ok();
-    let database_url =
-        "postgres://inventiv_app:inventiv_app_password@localhost:5432/inventiv_agents";
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(database_url)
+        .connect(&common::app_database_url())
         .await?;
 
     let org_id = Uuid::new_v4();

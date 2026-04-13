@@ -1,6 +1,7 @@
 mod common;
 
 use axum::body::Body;
+use serial_test::serial;
 use axum::http::{Request, StatusCode};
 use axum::Router;
 use dotenvy::dotenv;
@@ -30,6 +31,7 @@ async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::R
 }
 
 #[tokio::test]
+#[serial(integration_db)]
 async fn test_create_provider_requires_auth() -> anyhow::Result<()> {
     dotenv().ok();
     let pool = DatabasePool::connect(&common::app_database_url()).await?;
@@ -51,6 +53,7 @@ async fn test_create_provider_requires_auth() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial(integration_db)]
 async fn test_admin_can_create_provider_via_http() -> anyhow::Result<()> {
     dotenv().ok();
     let raw_pool = PgPoolOptions::new()

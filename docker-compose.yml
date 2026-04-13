@@ -1,5 +1,9 @@
 # Local stack: PostgreSQL (pgvector) + Redis.
-# Copy .env.example to .env before first run. See README for Scaleway / staging notes.
+# Copy .env.example to .env (Compose loads it for ${VAR} substitution in this file).
+# Run: docker compose up -d --wait
+# See README.md for troubleshooting.
+
+name: inventivagents
 
 services:
   db:
@@ -15,15 +19,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
+      # $$ becomes $ in the container so the shell expands POSTGRES_* from the image env.
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\" || exit 1",
+          "pg_isready -h 127.0.0.1 -p 5432 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\" || exit 1",
         ]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
+      retries: 12
+      start_period: 30s
     networks:
       - inventiv
 
@@ -40,7 +45,8 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
-      retries: 5
+      retries: 8
+      start_period: 5s
     networks:
       - inventiv
 

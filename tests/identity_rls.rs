@@ -1,6 +1,7 @@
 mod common;
 
 use dotenvy::dotenv;
+use serial_test::serial;
 use sqlx::postgres::PgPoolOptions;
 use uuid::Uuid;
 
@@ -27,6 +28,7 @@ async fn insert_org_with_context(
 }
 
 #[tokio::test]
+#[serial(integration_db)]
 async fn test_rls_isolation_between_orgs() -> anyhow::Result<()> {
     dotenv().ok();
 

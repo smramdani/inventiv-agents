@@ -1,6 +1,7 @@
 mod common;
 
 use dotenvy::dotenv;
+use serial_test::serial;
 use inventivagents::domain::agents::agent::Agent;
 use inventivagents::domain::agents::provider::LlmProvider;
 use inventivagents::domain::agents::skill::{Skill, SkillType};
@@ -25,6 +26,7 @@ async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::R
 }
 
 #[tokio::test]
+#[serial(integration_db)]
 async fn test_agents_registry_rls_isolation() -> anyhow::Result<()> {
     dotenv().ok();
     let pool = PgPoolOptions::new()
@@ -61,6 +63,7 @@ async fn test_agents_registry_rls_isolation() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial(integration_db)]
 async fn test_admin_can_create_agent_with_multiple_skills() -> anyhow::Result<()> {
     dotenv().ok();
     let pool = PgPoolOptions::new()

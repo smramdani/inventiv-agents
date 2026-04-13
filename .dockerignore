@@ -1,0 +1,9 @@
+# Keep API images small when you add a Dockerfile later.
+/target
+.git
+.env
+*.md
+.specify
+specify
+tests
+.github

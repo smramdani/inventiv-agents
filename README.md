@@ -52,16 +52,21 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    # Edit .env: set POSTGRES_PASSWORD and JWT_SECRET for anything beyond local-only use.
    ```
 
-3. **Start infrastructure** (PostgreSQL **pgvector** + Redis, healthchecks, named volumes):
+3. **Start infrastructure** (PostgreSQL **pgvector** + Redis, healthchecks, named volumes).  
+   Requires **Docker Compose v2** (Docker Desktop includes it). From the repo root:
    ```bash
-   docker compose up -d
+   docker compose up -d --wait db redis
    docker compose ps
    ```
-   Wait until `db` and `redis` show as **healthy** in `docker compose ps`.
+   The `--wait` flag blocks until **healthchecks** pass. If your Compose version is older and rejects `--wait`, run `docker compose up -d db redis` and wait until `docker compose ps` shows `healthy` for `db` (and `redis`).
 
 4. **Apply database migrations** (ordered `migrations/*.sql` via the superuser in the container):
    ```bash
    ./scripts/db/apply-migrations.sh
+   ```
+   On an **already-initialized** database the script exits with a hint; wipe local volumes and reapply with:
+   ```bash
+   ./scripts/db/reset-local-db.sh
    ```
    Equivalent manual one-liner per file:
    ```bash
@@ -75,11 +80,26 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    cargo run
    ```
 
-6. **Run tests** (integration tests use `DATABASE_URL` from `.env`, defaulting to `127.0.0.1:5432` and the `inventiv_app` role):
+6. **Run tests** (integration tests use `DATABASE_URL` from `.env`, defaulting to `127.0.0.1:5432` and the `inventiv_app` role).  
+   DB integration tests use a **shared named lock** (`serial_test`) so `cargo test` stays safe against one Docker Postgres:
    ```bash
    set -a && source .env && set +a
    cargo test
    ```
+
+7. **One-shot local check** (starts Compose, migrates, runs `cargo test` + release build):
+   ```bash
+   ./scripts/dev/test-local-full.sh
+   ```
+   Uses `DOCKER_COMPOSE` if set (default `docker compose`).
+
+### Docker troubleshooting (local)
+
+- **`Cannot connect to the Docker daemon`**: start Docker Desktop (macOS/Windows) or `sudo systemctl start docker` on Linux.
+- **Port `5432` already in use**: set `POSTGRES_PORT=5433` (or another free port) in `.env` and set `DATABASE_URL` to the **same** host port (e.g. `@127.0.0.1:5433/`).
+- **Healthcheck never turns healthy**: inspect logs with `docker compose logs db --tail 100`; first boot can take longer on slow disks (`start_period` is 30s for Postgres).
+- **Compose vs `docker-compose`**: this repo targets the plugin form `docker compose`; legacy `docker-compose` may work but is not tested.
+- **`apply-migrations.sh` exits with “already has schema”**: run `./scripts/db/reset-local-db.sh` once (destroys local Docker volumes for this project), then migrate again.
 
 ### Staging / production (e.g. Scaleway)
 

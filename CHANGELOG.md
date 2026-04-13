@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-04-13
 
 ### Added
-- Initial project structure following Hexagonal Architecture.
-- Spec Kit integration and customized Constitution for Rust.
-- Core Domain models for Identity (Organization, User, Roles).
-- Multi-tenancy support using PostgreSQL Row Level Security (RLS) with dedicated `inventiv_app` role.
-- Initial API skeleton with Organization registration.
-- Observability schema (Audit logs, Telemetry, Metrics).
-- Internationalization support (EN, FR, AR).
-- Docker infrastructure (PostgreSQL with pgvector, Redis).
-- Connection to GitHub repository `smramdani/inventiv-agents`.
+- **Multi-Tenant Identity & RBAC**:
+    - Organization registration and Owner setup.
+    - User invitation system (Owner, Admin, User roles).
+    - Group management (Create groups within Organization).
+    - Secure JWT-based Authentication.
+- **Security & Safety**:
+    - Hardened PostgreSQL **Row Level Security (RLS)** using `FORCE ROW LEVEL SECURITY`.
+    - Dedicated restricted `inventiv_app` database user for execution isolation.
+- **Infrastructure**:
+    - Modular Hexagonal Architecture in Rust.
+    - TDD implementation for Domain and Integration layers.
+    - Dockerized Postgres (with pgvector) and Redis.
+- **Documentation**:
+    - Comprehensive README.md and Project Constitution.
+    - Synthetic CHANGELOG initialization.

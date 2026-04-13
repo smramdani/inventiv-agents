@@ -1,5 +1,33 @@
 # Milestone 3: Registry & Entities (Providers, Skills, Agents)
 
+## Layer definition of done (Constitution XIV)
+
+Use this as the **completion gate** for M3 before calling the milestone done. Mark **N/A** only where noted.
+
+### Vertical slice
+- **Story linkage**: Work traces to **US.1** (provider registration), **US.2** (MCP skill), and **US.3** (agent with mission + skills) in `specify/spec.md` §6.
+- **Independent value**: Admin/Owner can persist providers, skills, and agents with correct org scope via repository + API path; demonstrable without chat UI (M4/M5).
+- **Artifacts**: When behavior ships, `specify/spec.md` / `specify/plan.md` / this file stay aligned (XII); any scope change is updated there first.
+
+### Database `[DB]`
+- **T3.1** satisfies: migration reviewed, upgrade path clear, **RLS + FORCE RLS** on all new tables, FK/uniqueness match domain rules.
+
+### Backend — domain `[Domain]`
+- **T3.2** satisfies: validation and types in domain modules; **`mod tests`** for URL/mission/persona/skill rules; no production `unwrap()`/`expect()` (VI).
+
+### Repository `[DB]` + `[Domain]` boundary
+- **T3.3** satisfies: `AgentsRepository` maps rows ↔ domain without leaking business rules into SQL beyond constraints; **`set_rls_context`** on every mutating and read path that must respect tenant.
+
+### API `[API]`
+- **T3.4** satisfies: handlers enforce **authn + Admin/Owner** (and org scope consistent with RLS); validation errors vs auth errors are distinct; structured logging + **TraceID** on success and failure (IX).
+
+### Front-end `[FE]`
+- **N/A for M3** (no cockpit UI in this milestone per `specify/plan.md` M3 scope). Revisit XIV FE gates at **M5**.
+
+### Cross-cutting
+- **Validation**: The **Validation** checklist below proves US.3-style flows and **RLS isolation**; `cargo fmt`, `cargo clippy`, and `cargo test` are green for touched crates.
+- **Security**: No secrets in logs; API keys stored per plan (encrypted at rest as specified in tasks/schema).
+
 ## Tasks
 
 ### T3.1: Database Schema Migration

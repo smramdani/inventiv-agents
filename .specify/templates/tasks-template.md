@@ -17,6 +17,7 @@ description: "Task list template for feature implementation"
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
 - Include exact file paths in descriptions
+- **Layers (optional but recommended)**: Append explicit scope when helpful, e.g. `[DB]`, `[API]`, `[FE]`, `[Domain]`, so reviewers can verify **Constitution XIV (Definition of Done by Layer)** for each touched surface. At each user story **Checkpoint**, confirm XIV gates for those layers (or mark **N/A** with a one-line rationale).
 
 ## Path Conventions
 
@@ -249,3 +250,4 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- **Definition of Done by layer**: The project constitution defines per-layer completion criteria (database, domain, API, front-end when present, cross-cutting). Ensure tasks collectively cover every layer the story touches, and that the final **Done** step for the story explicitly satisfies those gates (or documents N/A).

@@ -15,10 +15,20 @@
   - Feature requirements from spec.md
   - Technical context from plan.md
   - Implementation details from tasks.md
+  - **Layer definition of done**: The project constitution (`.specify/memory/constitution.md`) includes **XIV — Definition of Done by Layer**. Generated checklists MUST include a dedicated section that verifies XIV for every layer this feature touches (vertical slice, database, backend/domain, API, front-end if applicable, cross-cutting), unless the user explicitly scopes the checklist narrower.
   
   DO NOT keep these sample items in the generated checklist file.
   ============================================================================
 -->
+
+## Layer definition of done (Constitution XIV)
+
+- [ ] CHK001 **Vertical slice**: User story or spec requirement ids are cited; slice is independently testable; spec/plan/tasks match shipped behavior (or deviations were ratified in artifacts first).
+- [ ] CHK002 **Database** (if touched): Migrations reviewed; RLS/tenancy and constraints match plan and spec.
+- [ ] CHK003 **Backend / domain** (if touched): Hexagonal boundaries respected; `mod tests` and needed integration tests; no forbidden `unwrap()`/`expect()` on production paths.
+- [ ] CHK004 **API** (if touched): Authn/authz and contracts; structured logging and TraceID on success and failure paths.
+- [ ] CHK005 **Front-end / client** (if touched): Loading/empty/success/error UX; safe error messages; telemetry per constitution.
+- [ ] CHK006 **Cross-cutting**: Security pass for new surfaces; README/CHANGELOG when user- or operator-visible; `cargo fmt`, `cargo clippy`, `cargo test` (or equivalent) pass.
 
 ## [Category 1]
 

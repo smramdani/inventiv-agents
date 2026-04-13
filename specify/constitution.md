@@ -63,6 +63,7 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
 - **Sync Requirement**: Artifacts must be kept in sync with the code. If the implementation deviates from the plan, the plan must be updated and ratified first.
 - **Traceability**: Every task in the task list must link back to a User Story or a specific technical requirement in the Spec.
 - **Layered Definition of Done**: Before a feature or task group is marked complete, the criteria in **XIV** must be satisfied for every application layer the change touches. Use `/speckit.checklist` (or an equivalent review) to record layer gates when automation is not yet available.
+- **Release discipline**: Delivery pipelines follow **XV**—one immutable release artifact promoted across environments, with configuration and secrets external to the package.
 
 ### XIII. Agentic Hierarchy & Logic
 - **Skill**: The atomic unit of capability. Powered by MCP servers or native Rust functions.
@@ -100,6 +101,25 @@ Delivery must combine a **vertical slice owner** (end-to-end coherence for the u
 - **Security**: New surfaces receive an explicit security pass (input validation, authz gaps, rate limits or abuse considerations when relevant).
 - **Documentation**: User-visible or operator-facing behavior updates `README.md` and `CHANGELOG.md` per X and XI.
 - **Quality bar**: `cargo fmt`, `cargo clippy`, and `cargo test` pass for affected crates before merge (III, VIII).
+- **Release and CD** (when applicable): Changes to build, packaging, or deployment satisfy **XV**—no environment-specific compiled behavior; one artifact promoted with external configuration and secrets.
+
+### XV. Immutable Release Artifact, Promotion, and Externalized Configuration (CI/CD)
+These rules align delivery with **build once, promote many** and **twelve-factor** style configuration. They apply to every deployable component (API binary, container image, or future front-end bundle).
+
+#### Immutable artifact and promotion
+- **Single package per release**: For a given version or release identifier (for example SemVer tag or digest), **one** build produces **one** deployable artifact that is **identical** across local integration, staging, and production. Environments differ only by **what is attached at runtime**, not by recompiling or rebuilding a separate artifact per environment for the same release.
+- **Promotion, not re-build**: Progression is **dev → staging → production** by **promoting the same validated artifact** (or the same immutable image digest) along controlled stages. Downstream stages may add gates (smoke tests, approvals); they must not introduce ad hoc rebuilds that change the bits under the same release label.
+- **Traceability**: The artifact carries an explicit **version or digest** visible at runtime (IX, X) and in deployment records so operators can prove what is running in each environment.
+
+#### Configuration and behavior outside the package
+- **No environment logic in source**: Application source must not encode environment-specific behavior (for example `if env == "prod"`) for **deployment** concerns. Feature flags that are **data-driven** and loaded from configuration or the database are acceptable when they are not used to bypass quality or security gates.
+- **External configuration**: All deployment-specific settings—URLs, pool sizes, feature toggles, log levels, third-party endpoints—are supplied via **environment variables**, **mounted configuration files**, or **platform configuration services**, appropriate to the host (local Compose, Kubernetes, Scaleway Serverless Containers, etc.).
+- **Secrets**: Secrets are **never** embedded in images or binaries. They are injected at runtime from a **secret manager** or equivalent mechanism.
+- **Data over code for tenant behavior**: Organization-specific or tenant-specific behavior that legitimately differs between installations is modeled in the **database** or **external policy stores**, not in private forks of the application package.
+
+#### Pipeline obligations
+- **CI** validates the same artifact shape used in production (tests, lint, SCA as adopted) and publishes a **versioned, immutable** output to a trusted registry or artifact store.
+- **CD** jobs perform **deploy and configure** only: roll out the pinned artifact, apply environment-specific **config** and **secrets**, run migrations when required, and verify health. **No drift** between “what was tested in staging” and “what runs in prod” except for explicitly externalized configuration and data.
 
 ## Tech Stack
 - **Language**: Rust (Stable)
@@ -115,7 +135,8 @@ Delivery must combine a **vertical slice owner** (end-to-end coherence for the u
 4. **Checklist / Analyze** (recommended before implementation): Run `/speckit.checklist` and/or `/speckit.analyze` to validate spec, plan, tasks, and **XIV layer gates** for the slice.
 5. **Implement**: Short, testable iterations; `cargo check` and `cargo test` on affected code.
 6. **Done**: Confirm XIV for every touched layer; update spec/plan/tasks if reality justified a change (XII).
+7. **Release (CD)**: Ship only **immutable, promoted artifacts** per XV; inject environment-specific settings and secrets at deploy time, never by rebuilding a differently configured package for the same release identifier.
 
-**Version**: 1.3.0 | **Ratified**: 2026-04-09 | **Last Amended**: 2026-04-13 | **Changes**: Added XIV Definition of Done by Layer; extended XII and Development Workflow for Spec Kit quality gates.
+**Version**: 1.4.0 | **Ratified**: 2026-04-09 | **Last Amended**: 2026-04-13 | **Changes**: Added XV immutable artifact, promotion pipeline, and externalized configuration (CI/CD); release step in Development Workflow.
 
 **Spec Kit**: The ratified constitution lives in `specify/constitution.md` and is **mirrored** at `.specify/memory/constitution.md` for Spec Kit (`/speckit.plan`, `/speckit.analyze`, etc.). The two files must stay identical; amend both on every constitution change.

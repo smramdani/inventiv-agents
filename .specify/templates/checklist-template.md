@@ -29,6 +29,7 @@
 - [ ] CHK004 **API** (if touched): Authn/authz and contracts; structured logging and TraceID on success and failure paths.
 - [ ] CHK005 **Front-end / client** (if touched): Loading/empty/success/error UX; safe error messages; telemetry per constitution.
 - [ ] CHK006 **Cross-cutting**: Security pass for new surfaces; README/CHANGELOG when user- or operator-visible; `cargo fmt`, `cargo clippy`, `cargo test` (or equivalent) pass.
+- [ ] CHK007 **Release / CD (Constitution XV)** (when build or deploy changes): Single immutable artifact promoted across stages; no environment-specific compiled logic; config and secrets only via external mechanisms; CI/CD matches production artifact shape.
 
 ## [Category 1]
 

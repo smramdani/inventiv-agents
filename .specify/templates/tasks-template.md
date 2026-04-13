@@ -251,3 +251,4 @@ With multiple developers:
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
 - **Definition of Done by layer**: The project constitution defines per-layer completion criteria (database, domain, API, front-end when present, cross-cutting). Ensure tasks collectively cover every layer the story touches, and that the final **Done** step for the story explicitly satisfies those gates (or documents N/A).
+- **Release packaging (XV)**: For work that affects images, binaries, or pipelines, ensure **one build → one artifact → promotion** with environment-specific behavior only in config, secrets, or database—not in source forks or per-env rebuilds for the same release id.

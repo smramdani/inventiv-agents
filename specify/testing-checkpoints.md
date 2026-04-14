@@ -18,7 +18,7 @@ This note complements **Constitution VIII** (tests) and **XIV** (layer gates). I
 ## M4 (agentic engine) — recommended manual gates
 
 1. **After Phase 1 (domain ports)** — Mostly **automated** (`cargo test`); no full-app requirement yet.
-2. **After Phase 2 (LLM HTTP client + DB resolution)** — **Manual or staging**: `make ready`, create provider with a **test** API key and an agent with `llm_provider_id`, then call a small **Rust test binary** or temporary route that uses `openai_compatible_client_for_agent` + `complete` against a **cheap/safe** model (or keep relying on **wiremock** in CI only). Goal: prove real TLS + URL + key from DB.
+2. **After Phase 2 (LLM HTTP client + DB resolution)** — **Automated**: `tests/llm_resolve_integration.rs` covers DB → `openai_compatible_client_for_agent` → wiremock (no real LLM). **Manual or staging** (optional): same flow against a **cheap/safe** real model to prove TLS and provider-specific URLs. Goal: prove real TLS + URL + key from DB when you leave mocks.
 3. **After Phase 3 (SSE route)** — **Manual**: `curl -N` (or similar) against the streaming endpoint; confirm chunks and terminal event.
 4. **After Phase 4 (MCP)** — **Manual**: run against a **local stub MCP** or known public sandbox; confirm timeout and error paths.
 5. **After Phase 5–6 (persistence + orchestration)** — **Manual + DB**: verify rows in execution/metrics tables and RLS with two orgs.

@@ -5,28 +5,6 @@ use serial_test::serial;
 use sqlx::postgres::PgPoolOptions;
 use uuid::Uuid;
 
-async fn insert_org_with_context(
-    pool: &sqlx::PgPool,
-    org_id: Uuid,
-    name: &str,
-) -> anyhow::Result<()> {
-    let mut tx = pool.begin().await?;
-    sqlx::query("SELECT set_config('app.current_org_id', $1, true)")
-        .bind(org_id.to_string())
-        .execute(&mut *tx)
-        .await?;
-
-    sqlx::query("INSERT INTO organizations (id, name, default_locale) VALUES ($1, $2, $3)")
-        .bind(org_id)
-        .bind(name)
-        .bind("en_US")
-        .execute(&mut *tx)
-        .await?;
-
-    tx.commit().await?;
-    Ok(())
-}
-
 #[tokio::test]
 #[serial(integration_db)]
 async fn test_rls_isolation_between_orgs() -> anyhow::Result<()> {
@@ -40,8 +18,8 @@ async fn test_rls_isolation_between_orgs() -> anyhow::Result<()> {
     let org_a_id = Uuid::new_v4();
     let org_b_id = Uuid::new_v4();
 
-    insert_org_with_context(&pool, org_a_id, "Org A").await?;
-    insert_org_with_context(&pool, org_b_id, "Org B").await?;
+    common::insert_org(&pool, org_a_id, "Org A").await?;
+    common::insert_org(&pool, org_b_id, "Org B").await?;
 
     let email_a = format!("user_a_{}@example.com", Uuid::new_v4());
     let email_b = format!("user_b_{}@example.com", Uuid::new_v4());

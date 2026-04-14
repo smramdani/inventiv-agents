@@ -53,7 +53,7 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 - [x] **T4.5** `[Infra]` Wire **provider resolution** from `AgentsRepository` / provider id on the agent row; never log API keys (IX).
 - [x] **T4.6** `[Domain]` **[US.1]** Token accounting model: capture input/output token counts (and optional cost fields) for each completion step for later persistence.
 
-**Checkpoint**: Wiremock-backed unit tests for JSON parsing and 429 mapping; DB helpers `get_agent_by_id` / `get_llm_provider_with_key` + `openai_compatible_client_for_agent`. See `specify/testing-checkpoints.md` for when to hit a real LLM.
+**Checkpoint**: Wiremock-backed unit tests for JSON parsing and 429 mapping; DB helpers `get_agent_by_id` / `get_llm_provider_with_key` + `openai_compatible_client_for_agent`. Integration tests in `tests/llm_resolve_integration.rs` (DB seed → resolver → mock HTTP). See `specify/testing-checkpoints.md` for when to hit a real LLM.
 
 ---
 

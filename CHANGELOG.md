@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **Integration tests (M4 LLM resolution)**: `tests/llm_resolve_integration.rs` — DB-seeded provider + agent → `openai_compatible_client_for_agent` → wiremock completion; negative path when agent has no provider. Shared `tests/common::insert_org`; explicit `sqlx` + `anyhow` in `[dev-dependencies]` for integration crates.
 - **Milestone 4 (infra, Phase 2)**: `src/infrastructure/llm/` — `OpenAiCompatibleClient` (`POST /v1/chat/completions`, `LlmCompletionPort`), `openai_compatible_client_for_agent` resolver; `AgentsRepository::{get_agent_by_id,get_llm_provider_with_key}`; domain `TokenUsage`; dev-dependency `wiremock` for client tests.
 - **Spec Kit**: `specify/testing-checkpoints.md` — when to run manual/full-stack tests per milestone (esp. M4 SSE/MCP and real LLM timing).
 - **Milestone 4 (domain, Phase 1)**: `src/domain/engine/` — `ReasoningPhase` / `TransitionInput` / `EngineError` with tests; `LlmCompletionPort` + request/response types; `McpInvocationPort` + tool list/invoke types; dependency `async-trait` for port traits.

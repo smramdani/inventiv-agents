@@ -1,7 +1,6 @@
 mod common;
 
 use axum::body::Body;
-use serial_test::serial;
 use axum::http::{Request, StatusCode};
 use axum::Router;
 use dotenvy::dotenv;
@@ -10,25 +9,10 @@ use inventivagents::api::app_router;
 use inventivagents::domain::identity::user::UserRole;
 use inventivagents::infrastructure::auth::jwt::JwtService;
 use inventivagents::infrastructure::database::DatabasePool;
+use serial_test::serial;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 use uuid::Uuid;
-
-async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::Result<()> {
-    let mut tx = pool.begin().await?;
-    sqlx::query("SELECT set_config('app.current_org_id', $1, true)")
-        .bind(org_id.to_string())
-        .execute(&mut *tx)
-        .await?;
-    sqlx::query("INSERT INTO organizations (id, name, default_locale) VALUES ($1, $2, $3)")
-        .bind(org_id)
-        .bind(label)
-        .bind("en_US")
-        .execute(&mut *tx)
-        .await?;
-    tx.commit().await?;
-    Ok(())
-}
 
 #[tokio::test]
 #[serial(integration_db)]
@@ -62,7 +46,7 @@ async fn test_admin_can_create_provider_via_http() -> anyhow::Result<()> {
         .await?;
 
     let org_id = Uuid::new_v4();
-    insert_org(&raw_pool, org_id, "Org API").await?;
+    common::insert_org(&raw_pool, org_id, "Org API").await?;
 
     let admin_email = format!("admin_{}@example.com", Uuid::new_v4());
     {

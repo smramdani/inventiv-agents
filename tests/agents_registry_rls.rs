@@ -1,29 +1,13 @@
 mod common;
 
 use dotenvy::dotenv;
-use serial_test::serial;
 use inventivagents::domain::agents::agent::Agent;
 use inventivagents::domain::agents::provider::LlmProvider;
 use inventivagents::domain::agents::skill::{Skill, SkillType};
 use inventivagents::infrastructure::database::agents::AgentsRepository;
+use serial_test::serial;
 use sqlx::postgres::PgPoolOptions;
 use uuid::Uuid;
-
-async fn insert_org(pool: &sqlx::PgPool, org_id: Uuid, label: &str) -> anyhow::Result<()> {
-    let mut tx = pool.begin().await?;
-    sqlx::query("SELECT set_config('app.current_org_id', $1, true)")
-        .bind(org_id.to_string())
-        .execute(&mut *tx)
-        .await?;
-    sqlx::query("INSERT INTO organizations (id, name, default_locale) VALUES ($1, $2, $3)")
-        .bind(org_id)
-        .bind(label)
-        .bind("en_US")
-        .execute(&mut *tx)
-        .await?;
-    tx.commit().await?;
-    Ok(())
-}
 
 #[tokio::test]
 #[serial(integration_db)]
@@ -36,8 +20,8 @@ async fn test_agents_registry_rls_isolation() -> anyhow::Result<()> {
 
     let org_a = Uuid::new_v4();
     let org_b = Uuid::new_v4();
-    insert_org(&pool, org_a, "Org Agents A").await?;
-    insert_org(&pool, org_b, "Org Agents B").await?;
+    common::insert_org(&pool, org_a, "Org Agents A").await?;
+    common::insert_org(&pool, org_b, "Org Agents B").await?;
 
     let provider = LlmProvider::new(org_a, "OVH", "https://api.ovh.com")?;
 
@@ -72,7 +56,7 @@ async fn test_admin_can_create_agent_with_multiple_skills() -> anyhow::Result<()
         .await?;
 
     let org_id = Uuid::new_v4();
-    insert_org(&pool, org_id, "Org HR").await?;
+    common::insert_org(&pool, org_id, "Org HR").await?;
 
     let provider = LlmProvider::new(org_id, "LLM", "https://api.openai.com")?;
     let skill_a = Skill::new(

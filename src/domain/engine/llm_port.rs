@@ -34,6 +34,29 @@ pub struct LlmCompletion {
     pub output_tokens: u64,
 }
 
+/// Token accounting for a single completion (persisted in later milestones).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+pub struct TokenUsage {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+}
+
+impl TokenUsage {
+    #[must_use]
+    pub const fn total(self) -> u64 {
+        self.input_tokens.saturating_add(self.output_tokens)
+    }
+}
+
+impl From<&LlmCompletion> for TokenUsage {
+    fn from(c: &LlmCompletion) -> Self {
+        Self {
+            input_tokens: c.input_tokens,
+            output_tokens: c.output_tokens,
+        }
+    }
+}
+
 #[derive(Debug, Error)]
 pub enum LlmCompletionError {
     #[error("provider error: {0}")]
@@ -86,5 +109,16 @@ mod tests {
         };
         let err = port.complete(req).await.unwrap_err();
         assert!(matches!(err, LlmCompletionError::Provider(_)));
+    }
+
+    #[test]
+    fn token_usage_from_completion() {
+        let c = LlmCompletion {
+            content: "x".into(),
+            input_tokens: 10,
+            output_tokens: 4,
+        };
+        let u = TokenUsage::from(&c);
+        assert_eq!(u.total(), 14);
     }
 }

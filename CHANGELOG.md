@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **Milestone 4 (infra, Phase 2)**: `src/infrastructure/llm/` — `OpenAiCompatibleClient` (`POST /v1/chat/completions`, `LlmCompletionPort`), `openai_compatible_client_for_agent` resolver; `AgentsRepository::{get_agent_by_id,get_llm_provider_with_key}`; domain `TokenUsage`; dev-dependency `wiremock` for client tests.
+- **Spec Kit**: `specify/testing-checkpoints.md` — when to run manual/full-stack tests per milestone (esp. M4 SSE/MCP and real LLM timing).
 - **Milestone 4 (domain, Phase 1)**: `src/domain/engine/` — `ReasoningPhase` / `TransitionInput` / `EngineError` with tests; `LlmCompletionPort` + request/response types; `McpInvocationPort` + tool list/invoke types; dependency `async-trait` for port traits.
 - **Spec Kit — Milestone 4**: Task list `specify/tasks/004_milestone_4.md` (Agentic Engine: LLM ports, SSE API, MCP client, reasoning loop, run/metrics persistence, XIV gates); `specify/plan.md` links M4 to that file; `specify/spec.md` §7 summarizes M4 technical scope and US.4 linkage.
 - **Constitution 1.4.0**: Principle **XV** (immutable release artifact, dev→staging→prod promotion, externalized configuration and secrets, CI/CD pipeline obligations); **XII** and **XIV** cross-references; **Development Workflow** step 7 for CD.

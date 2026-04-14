@@ -49,11 +49,11 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 **Purpose**: Sovereign provider calls using org-stored provider URL + secret (M3).
 
-- [ ] **T4.4** `[Infra]` Implement **`OpenAiCompatibleClient`** (or similarly named) in `src/infrastructure/llm/` using `reqwest` + streaming response handling; map HTTP and parse errors to domain errors.
-- [ ] **T4.5** `[Infra]` Wire **provider resolution** from `AgentsRepository` / provider id on the agent row; never log API keys (IX).
-- [ ] **T4.6** `[Domain]` **[US.1]** Token accounting model: capture input/output token counts (and optional cost fields) for each completion step for later persistence.
+- [x] **T4.4** `[Infra]` Implement **`OpenAiCompatibleClient`** (or similarly named) in `src/infrastructure/llm/` using `reqwest` + streaming response handling; map HTTP and parse errors to domain errors.
+- [x] **T4.5** `[Infra]` Wire **provider resolution** from `AgentsRepository` / provider id on the agent row; never log API keys (IX).
+- [x] **T4.6** `[Domain]` **[US.1]** Token accounting model: capture input/output token counts (and optional cost fields) for each completion step for later persistence.
 
-**Checkpoint**: Unit tests with mock HTTP or recorded fixtures; optional narrow integration test against a fake LLM server if feasible.
+**Checkpoint**: Wiremock-backed unit tests for JSON parsing and 429 mapping; DB helpers `get_agent_by_id` / `get_llm_provider_with_key` + `openai_compatible_client_for_agent`. See `specify/testing-checkpoints.md` for when to hit a real LLM.
 
 ---
 

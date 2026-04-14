@@ -9,7 +9,7 @@ The Rust backend act as an orchestration kernel. It manages the multi-tenant lif
 | :--- | :--- | :--- |
 | **M1 & M2 (Done)** | **Base Foundation** | Identity, Auth, RLS, Traceability, Telemetry. |
 | **M3 (Done)** | **Registry & Entities** | DB schema, domain, `AgentsRepository`, Admin/Owner management API, RLS tests (`specify/tasks/003_milestone_3.md`). |
-| **M4** | **The Agentic Engine** | Sovereign API abstraction (SSE) + MCP Client + Reasoning Loop logic. **Tasks:** `specify/tasks/004_milestone_4.md`. |
+| **M4** | **The Agentic Engine** | Sovereign API abstraction (SSE) + MCP Client + Reasoning Loop logic. **Tasks:** `specify/tasks/004_milestone_4.md`. **Manual test timing:** `specify/testing-checkpoints.md`. |
 | **M5** | **The Sovereign Cockpit** | Secure Chat Sessions + RLS session sharing + Audit/Cost dashboard. |
 
 ## 3. Component Design

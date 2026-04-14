@@ -29,6 +29,28 @@ impl From<LlmProviderRow> for LlmProvider {
 }
 
 #[derive(Debug, sqlx::FromRow)]
+struct LlmProviderWithKeyRow {
+    id: Uuid,
+    organization_id: Uuid,
+    name: String,
+    base_url: String,
+    api_key_encrypted: Option<String>,
+    is_active: bool,
+}
+
+impl LlmProviderWithKeyRow {
+    fn into_provider(self) -> LlmProvider {
+        LlmProvider {
+            id: self.id,
+            organization_id: self.organization_id,
+            name: self.name,
+            base_url: self.base_url,
+            is_active: self.is_active,
+        }
+    }
+}
+
+#[derive(Debug, sqlx::FromRow)]
 struct AgentRow {
     id: Uuid,
     organization_id: Uuid,
@@ -85,6 +107,46 @@ impl AgentsRepository {
         .await?;
 
         Ok(())
+    }
+
+    pub async fn get_agent_by_id(
+        tx: &mut Transaction<'_, Postgres>,
+        org_id: Uuid,
+        agent_id: Uuid,
+    ) -> AppResult<Option<Agent>> {
+        DatabasePool::set_rls_context(tx, org_id).await?;
+
+        let row = sqlx::query_as::<_, AgentRow>(
+            r#"SELECT id, organization_id, llm_provider_id, name, mission, persona, is_active
+               FROM agents WHERE id = $1"#,
+        )
+        .bind(agent_id)
+        .fetch_optional(&mut **tx)
+        .await?;
+
+        Ok(row.map(Into::into))
+    }
+
+    /// Returns provider row plus stored key material (`api_key_encrypted` column; plaintext until KMS).
+    pub async fn get_llm_provider_with_key(
+        tx: &mut Transaction<'_, Postgres>,
+        org_id: Uuid,
+        provider_id: Uuid,
+    ) -> AppResult<Option<(LlmProvider, Option<String>)>> {
+        DatabasePool::set_rls_context(tx, org_id).await?;
+
+        let row = sqlx::query_as::<_, LlmProviderWithKeyRow>(
+            r#"SELECT id, organization_id, name, base_url, api_key_encrypted, is_active
+               FROM llm_providers WHERE id = $1"#,
+        )
+        .bind(provider_id)
+        .fetch_optional(&mut **tx)
+        .await?;
+
+        Ok(row.map(|r| {
+            let key = r.api_key_encrypted.clone();
+            (r.into_provider(), key)
+        }))
     }
 
     pub async fn list_llm_providers(

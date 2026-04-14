@@ -95,7 +95,7 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 
 #### Repeatable dev commands (`dev.sh` + `Makefile`)
 
-Run **`make help`** for a full lifecycle guide, simple verbs (`build`, `release`, `start`, `stop`, `delete`, …), low-level targets, and deploy stub notes.
+Run **`make help`** for a full lifecycle guide, simple verbs (`build`, `release`, `start`, `stop`, `delete`, …), low-level targets, and deploy stub notes. For **when to run manual or full-stack tests** during milestones (especially M4), see `specify/testing-checkpoints.md`.
 
 Use one entry point so every machine runs the same sequence (Docker up, optional migrations, `.env` for `cargo`):
 

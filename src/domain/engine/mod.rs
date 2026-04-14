@@ -6,7 +6,7 @@ mod reasoning;
 
 pub use llm_port::{
     ChatRole, LlmCompletion, LlmCompletionError, LlmCompletionPort, LlmCompletionRequest,
-    LlmMessage,
+    LlmMessage, TokenUsage,
 };
 pub use mcp_port::{
     McpInvocationError, McpInvocationPort, McpInvokeRequest, McpInvokeResult, McpToolDefinition,

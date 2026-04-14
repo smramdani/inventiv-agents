@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **Milestone 4 (domain, Phase 1)**: `src/domain/engine/` — `ReasoningPhase` / `TransitionInput` / `EngineError` with tests; `LlmCompletionPort` + request/response types; `McpInvocationPort` + tool list/invoke types; dependency `async-trait` for port traits.
 - **Spec Kit — Milestone 4**: Task list `specify/tasks/004_milestone_4.md` (Agentic Engine: LLM ports, SSE API, MCP client, reasoning loop, run/metrics persistence, XIV gates); `specify/plan.md` links M4 to that file; `specify/spec.md` §7 summarizes M4 technical scope and US.4 linkage.
 - **Constitution 1.4.0**: Principle **XV** (immutable release artifact, dev→staging→prod promotion, externalized configuration and secrets, CI/CD pipeline obligations); **XII** and **XIV** cross-references; **Development Workflow** step 7 for CD.
 - **Local & cloud Postgres layout**: `docker-compose.yml` with healthchecks, stable service/container names, named volumes, and `inventiv` bridge network; `.env.example` for Compose + app variables; `scripts/db/apply-migrations.sh`; README section for local workflow and Scaleway-oriented staging/production notes.

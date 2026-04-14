@@ -37,11 +37,11 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 **Purpose**: Stable boundaries before HTTP and DB details.
 
-- [ ] **T4.1** `[Domain]` Define the **reasoning loop** model (states: reason → tool selection → execute → validate → respond, or equivalent) as pure domain types with errors in `src/domain/` (new module e.g. `engine` or `reasoning`), with `mod tests` for invalid transitions.
-- [ ] **T4.2** `[Domain]` Define an **`LlmCompletionPort`** (trait): non-streaming and/or streaming chunk type, request context (model id, messages, max tokens), and structured errors—no `reqwest` in domain.
-- [ ] **T4.3** `[Domain]` Define an **`McpInvocationPort`** (trait): discover tools (if required by plan), invoke tool by name with JSON args, map timeouts and transport errors to domain errors—no raw JSON-RPC wire types leaked into handlers.
+- [x] **T4.1** `[Domain]` Define the **reasoning loop** model (states: reason → tool selection → execute → validate → respond, or equivalent) as pure domain types with errors in `src/domain/` (new module e.g. `engine` or `reasoning`), with `mod tests` for invalid transitions.
+- [x] **T4.2** `[Domain]` Define an **`LlmCompletionPort`** (trait): non-streaming and/or streaming chunk type, request context (model id, messages, max tokens), and structured errors—no `reqwest` in domain.
+- [x] **T4.3** `[Domain]` Define an **`McpInvocationPort`** (trait): discover tools (if required by plan), invoke tool by name with JSON args, map timeouts and transport errors to domain errors—no raw JSON-RPC wire types leaked into handlers.
 
-**Checkpoint**: Traits compile; unit tests describe expected behavior (may fail until Phase 2 adapters exist).
+**Checkpoint**: Traits compile; unit tests cover phase transitions and port call shapes (adapters in Phase 2+).
 
 ---
 

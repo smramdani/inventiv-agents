@@ -8,12 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- **README**: local development documents `make help`, simple Makefile verbs (`build`, `release`, `start`, `stop`, …), and deploy stub targets.
+- **`/org/register`**: set `app.current_org_id` in the same transaction before inserts so registration succeeds under RLS (`inventiv_app`).
+- **`/auth/login`**: use `lookup_user_for_login` instead of a direct `users` select blocked by RLS without org context.
+- **README**: local development documents `make help`, simple Makefile verbs (`build`, `release`, `start`, `stop`, …), and deploy stub targets; manual migration list includes `005`.
 - **Docker local stack**: Compose file top-level `name: inventivagents`; Postgres healthcheck uses `pg_isready` on `127.0.0.1` with correct `$$` env expansion; longer `start_period`; scripts use `DOCKER_COMPOSE` and `pg_isready -h 127.0.0.1`; `test-local-full.sh` tries `compose up --wait` then falls back; `apply-migrations.sh` refuses re-run if schema exists; `reset-local-db.sh` for clean volumes; README Docker troubleshooting and `--wait` docs; `.dockerignore` for future images.
 - **Integration tests**: `serial_test` with shared `integration_db` lock across `tests/*.rs` so parallel `cargo test` does not corrupt shared Postgres.
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **Migration `005_login_lookup_and_register_rls.sql`**: `lookup_user_for_login(email)` (`SECURITY DEFINER`) so `/auth/login` works under RLS with role `inventiv_app`.
+- **HTTP integration tests**: `tests/identity_http.rs` (`/org/register`, `/auth/login`, `/auth/whoami`, 401 smoke for `/org/users`, `/org/groups`, `/telemetry/frontend`); extended `tests/agents_api.rs` (GET `/org/providers` auth, full registry list/create/link flow). Helpers `insert_admin_user` / `admin_bearer_token` in `tests/common`.
 - **Integration tests (M4 LLM resolution)**: `tests/llm_resolve_integration.rs` — DB-seeded provider + agent → `openai_compatible_client_for_agent` → wiremock completion; negative path when agent has no provider. Shared `tests/common::insert_org`; explicit `sqlx` + `anyhow` in `[dev-dependencies]` for integration crates.
 - **Milestone 4 (infra, Phase 2)**: `src/infrastructure/llm/` — `OpenAiCompatibleClient` (`POST /v1/chat/completions`, `LlmCompletionPort`), `openai_compatible_client_for_agent` resolver; `AgentsRepository::{get_agent_by_id,get_llm_provider_with_key}`; domain `TokenUsage`; dev-dependency `wiremock` for client tests.
 - **Spec Kit**: `specify/testing-checkpoints.md` — when to run manual/full-stack tests per milestone (esp. M4 SSE/MCP and real LLM timing).

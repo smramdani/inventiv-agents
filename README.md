@@ -71,7 +71,7 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    Equivalent manual one-liner per file:
    ```bash
    docker compose exec -T db psql -U inventiv_user -d inventiv_agents -v ON_ERROR_STOP=1 < migrations/001_initial_schema_with_rls.sql
-   # … repeat for 002, 003, 004
+   # … repeat for 002, 003, 004, 005
    ```
 
 5. **Run the API** (loads `.env` via `dotenv` in `main`):

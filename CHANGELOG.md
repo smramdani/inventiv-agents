@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Dev tooling**: `make check-local` / `./scripts/dev/dev.sh check-local` — `fmt` + `clippy` + `cargo test --lib` without Docker (for machines where `docker` is not on `PATH`); `make check` unchanged (full tests still need Docker). Documented in `make help`, README (MVP note), and `specify/mvp-engine-validation.md`.
 - **Roadmap (Spec Kit)**: `specify/plan.md` splits **M4a** (MVP engine: LLM + SSE, no tools / no MCP) vs **M4b** (MCP, persistence, full reasoning loop — deferred). `specify/spec.md` §7 and `specify/tasks/004_milestone_4.md` aligned; Phases 4–6 marked deferred until **`specify/mvp-engine-validation.md`** sign-off. **`specify/testing-checkpoints.md`** prioritizes M4a MVP gates.
 - **`/org/register`**: set `app.current_org_id` in the same transaction before inserts so registration succeeds under RLS (`inventiv_app`).
 - **`/auth/login`**: use `lookup_user_for_login` instead of a direct `users` select blocked by RLS without org context.

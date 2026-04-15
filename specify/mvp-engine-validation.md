@@ -17,6 +17,14 @@ make check
 # or: cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
+If **Docker is not available** (e.g. not on `PATH`), use:
+
+```bash
+make check-local
+```
+
+That runs `fmt`, `clippy`, and **`cargo test --lib`** only (library unit tests — no `tests/*.rs` integration suite). Run **`make check`** in CI or on a machine with Docker for the full gate including integration tests.
+
 - [ ] All unit tests pass (`src/**` `mod tests`, engine ports, LLM client wiremock).
 - [ ] All integration tests pass (`tests/*.rs`), including:
   - [ ] `agents_api`, `agents_registry_rls`, `identity_rls`, `identity_http`

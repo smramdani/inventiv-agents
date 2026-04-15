@@ -29,7 +29,8 @@ Commands:
   test-lib   Load .env + cargo test --lib only (no Docker required for unit tests)
   run        up + migrate_try + cargo run (remaining args forwarded like normal cargo run)
   run-rel    up + migrate_try + cargo run --release (args forwarded)
-  check      up + migrate_try + cargo fmt --check + clippy -D warnings + test
+  check      up + migrate_try + cargo fmt --check + clippy -D warnings + cargo test (needs Docker)
+  check-local Load .env + fmt --check + clippy -D warnings + cargo test --lib (no Docker)
   full       Full pipeline: up + migrate (strict) + cargo test + cargo build --release
 
 Environment:
@@ -135,6 +136,12 @@ main() {
       cargo fmt --all -- --check
       cargo clippy --all-targets -- -D warnings
       cargo test "$@"
+      ;;
+    check-local)
+      inventiv_load_env
+      cargo fmt --all -- --check
+      cargo clippy --all-targets -- -D warnings
+      cargo test --lib "$@"
       ;;
     full)
       bash "$INVENTIV_ROOT/scripts/dev/test-local-full.sh"

@@ -21,7 +21,8 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 
 | Step | Action |
 |------|--------|
-| Automated | `make check` — includes `llm_resolve_integration`, `sse_agent_stream_integration`, registry and identity HTTP tests. |
+| Automated (Docker available) | `make check` — includes `llm_resolve_integration`, `sse_agent_stream_integration`, registry and identity HTTP tests. |
+| Automated (no Docker on PATH) | `make check-local` — `fmt` + `clippy` + `cargo test --lib` only; run full `make check` in CI or when Docker is installed. |
 | Manual (recommended once per env) | `curl -N` on `POST /org/agents/<id>/complete/stream` with a real **test** provider key (see README). |
 | Gate | **Do not** start MCP client / tool orchestration work until MVP checklist is signed off (roadmap **M4b**). |
 

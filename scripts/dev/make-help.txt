@@ -26,7 +26,8 @@ Simple verbs (easy to remember)
   make test-unit       Same as: make test-lib — unit tests only, no Docker.
   make run             API, debug profile (pass args: make run ARGS='-- --help').
   make run-rel         API, release profile.
-  make check           fmt --check + clippy (-D warnings) + test (heavier gate).
+  make check           fmt --check + clippy (-D warnings) + full cargo test (needs Docker + DB for integration tests).
+  make check-local     fmt --check + clippy + cargo test --lib only (no Docker; use when Docker is not on PATH).
   make full            Strict migrate + full test suite + release build (CI-like locally).
   make fmt             Format Rust sources (cargo fmt).
   make lint            Clippy only (cargo clippy --all-targets -D warnings).

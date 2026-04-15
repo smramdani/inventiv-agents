@@ -56,7 +56,7 @@ clean:
 # ---------------------------------------------------------------------------
 # dev.sh passthrough (precise names)
 # ---------------------------------------------------------------------------
-.PHONY: doctor env up down migrate reset ready test-lib run run-rel check full cargo
+.PHONY: doctor env up down migrate reset ready test-lib run run-rel check check-local full cargo
 
 doctor:
 	@$(DEV) doctor
@@ -90,6 +90,10 @@ run-rel:
 
 check:
 	@$(DEV) check
+
+# Same quality bar as check but without Docker (unit tests in the library crate only).
+check-local:
+	@$(DEV) check-local
 
 full:
 	@$(DEV) full

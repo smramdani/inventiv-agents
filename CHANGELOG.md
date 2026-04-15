@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **Milestone 4 (API, Phase 3 — Spec Kit T4.7–T4.9)**: `POST /org/agents/:agent_id/complete/stream` returns SSE (`meta`, `delta`, `usage`, `error`, `done`); `trace_id` in structured logs and in `meta` / `X-Trace-ID`; handler `src/api/handlers/engine.rs`; deps `async-stream`, `futures-core`; integration test `tests/sse_agent_stream_integration.rs`.
 - **Migration `005_login_lookup_and_register_rls.sql`**: `lookup_user_for_login(email)` (`SECURITY DEFINER`) so `/auth/login` works under RLS with role `inventiv_app`.
 - **HTTP integration tests**: `tests/identity_http.rs` (`/org/register`, `/auth/login`, `/auth/whoami`, 401 smoke for `/org/users`, `/org/groups`, `/telemetry/frontend`); extended `tests/agents_api.rs` (GET `/org/providers` auth, full registry list/create/link flow). Helpers `insert_admin_user` / `admin_bearer_token` in `tests/common`.
 - **Integration tests (M4 LLM resolution)**: `tests/llm_resolve_integration.rs` — DB-seeded provider + agent → `openai_compatible_client_for_agent` → wiremock completion; negative path when agent has no provider. Shared `tests/common::insert_org`; explicit `sqlx` + `anyhow` in `[dev-dependencies]` for integration crates.

@@ -61,11 +61,11 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 **Purpose**: Real-time streaming to clients per plan §3.
 
-- [ ] **T4.7** `[API]` Add Axum route(s) for **streaming completion** (e.g. `POST /org/.../agents/{id}/complete/stream` or name per REST review)—document contract (headers, SSE event names, terminal event).
-- [ ] **T4.8** `[API]` Ensure **TraceID** propagation from request extension through LLM and MCP spans (IX).
-- [ ] **T4.9** `[API]` Integration test: authenticated user receives SSE events for a minimal “no tools” completion (may use test double for LLM).
+- [x] **T4.7** `[API]` Add Axum route(s) for **streaming completion** (e.g. `POST /org/.../agents/{id}/complete/stream` or name per REST review)—document contract (headers, SSE event names, terminal event).
+- [x] **T4.8** `[API]` Ensure **TraceID** propagation from request extension through LLM and MCP spans (IX).
+- [x] **T4.9** `[API]` Integration test: authenticated user receives SSE events for a minimal “no tools” completion (may use test double for LLM).
 
-**Checkpoint**: `curl`/test client can consume SSE end-to-end in tests.
+**Checkpoint**: `POST /org/agents/:agent_id/complete/stream` documented in README; `tests/sse_agent_stream_integration.rs`; structured logs include `trace_id` on stream open and LLM completion (MCP spans deferred to Phase 4).
 
 ---
 

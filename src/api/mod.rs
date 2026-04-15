@@ -71,6 +71,10 @@ pub fn app_router(db: DatabasePool) -> Router {
             "/org/agents/:agent_id/skills/:skill_id",
             post(handlers::agents::link_agent_skill),
         )
+        .route(
+            "/org/agents/:agent_id/complete/stream",
+            post(handlers::engine::post_agent_complete_stream),
+        )
         .layer(from_fn(trace_id_middleware))
         .with_state(db)
 }

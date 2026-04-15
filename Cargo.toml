@@ -44,6 +44,8 @@ thiserror = "1.0"
 
 # Async traits (hexagonal ports for Milestone 4)
 async-trait = "0.1"
+async-stream = "0.3"
+futures-core = "0.3"
 
 # Future-proofing for Milestone 4 (Coding Agent)
 bollard = "0.15"

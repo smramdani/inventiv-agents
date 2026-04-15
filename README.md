@@ -176,6 +176,20 @@ curl -X POST http://localhost:8080/org/providers \
   -d '{"name": "OVH AI","base_url": "https://api.ovh.com"}'
 ```
 
+### Agent completion stream (SSE — Milestone 4)
+
+`POST /org/agents/<agent_id>/complete/stream` returns **`text/event-stream`**. Send a JSON body with `message`, `model`, and optional `max_tokens`. Optional header **`X-Trace-ID`** (UUID) is echoed on the response and included in the first SSE `meta` event; if omitted, the server generates one.
+
+```bash
+curl -N -X POST "http://localhost:8080/org/agents/<AGENT_UUID>/complete/stream" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -H "X-Trace-ID: 00000000-0000-4000-8000-000000000001" \
+  -d '{"message":"Hello","model":"gpt-4o-mini","max_tokens":256}'
+```
+
+SSE events (in order on success): `meta` → `delta` → `usage` → `done`. See doc comments on `post_agent_complete_stream` in `src/api/handlers/engine.rs` for the exact JSON shape per event.
+
 ## 🤝 Contribution
 
 This project is Open Source under the **AGPL-3.0** license. We welcome contributions!
@@ -185,4 +199,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; engine and cockpit next per plan.
+**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; Milestone 4 engine in progress (SSE completion shipped; MCP / persistence next per `specify/tasks/004_milestone_4.md`).

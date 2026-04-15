@@ -91,13 +91,12 @@ pub async fn login(
     State(db): State<DatabasePool>,
     Json(payload): Json<LoginRequest>,
 ) -> AppResult<Json<LoginResponse>> {
-    let user: (Uuid, Uuid, String) = sqlx::query_as(
-        "SELECT user_id, organization_id, role_name FROM lookup_user_for_login($1)",
-    )
-    .bind(&payload.email)
-    .fetch_optional(db.get_pool())
-    .await?
-    .ok_or(AppError::Unauthorized)?;
+    let user: (Uuid, Uuid, String) =
+        sqlx::query_as("SELECT user_id, organization_id, role_name FROM lookup_user_for_login($1)")
+            .bind(&payload.email)
+            .fetch_optional(db.get_pool())
+            .await?
+            .ok_or(AppError::Unauthorized)?;
 
     let role = match user.2.as_str() {
         "Owner" => UserRole::Owner,

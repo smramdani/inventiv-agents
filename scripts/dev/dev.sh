@@ -29,8 +29,8 @@ Commands:
   test-lib   Load .env + cargo test --lib only (no Docker required for unit tests)
   run        up + migrate_try + cargo run (remaining args forwarded like normal cargo run)
   run-rel    up + migrate_try + cargo run --release (args forwarded)
-  check      up + migrate_try + cargo fmt --check + clippy -D warnings + cargo test (needs Docker)
-  check-local Load .env + fmt --check + clippy -D warnings + cargo test --lib (no Docker)
+  check      fmt + clippy + full cargo test when Docker is available; otherwise fmt + clippy + cargo test --lib (same as check-local)
+  check-local Load .env + fmt --check + clippy -D warnings + cargo test --lib (never uses Docker)
   full       Full pipeline: up + migrate (strict) + cargo test + cargo build --release
 
 Environment:
@@ -130,12 +130,18 @@ main() {
       cargo run --release "$@"
       ;;
     check)
-      inventiv_docker_up
-      inventiv_migrate_try
       inventiv_load_env
       cargo fmt --all -- --check
       cargo clippy --all-targets -- -D warnings
-      cargo test "$@"
+      if inventiv_has_docker; then
+        inventiv_docker_up
+        inventiv_migrate_try
+        cargo test "$@"
+      else
+        echo "==> Docker/Compose not on PATH or not working; running cargo test --lib only (no tests/*.rs integration suite)." >&2
+        echo "==> Install Docker Desktop, ensure 'docker compose version' works, then re-run for full checks." >&2
+        cargo test --lib "$@"
+      fi
       ;;
     check-local)
       inventiv_load_env

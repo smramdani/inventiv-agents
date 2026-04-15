@@ -17,13 +17,9 @@ make check
 # or: cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
-If **Docker is not available** (e.g. not on `PATH`), use:
+**`make check`** automatically falls back to **`cargo test --lib`** when Docker/Compose is not on `PATH` (you still get `fmt` + `clippy` + unit tests). To **force** the no-Docker path without probing: `make check-local`.
 
-```bash
-make check-local
-```
-
-That runs `fmt`, `clippy`, and **`cargo test --lib`** only (library unit tests — no `tests/*.rs` integration suite). Run **`make check`** in CI or on a machine with Docker for the full gate including integration tests.
+For the **full** gate (including `tests/*.rs`), run **`make check`** on a machine where `docker compose version` succeeds (e.g. CI or Docker Desktop running).
 
 - [ ] All unit tests pass (`src/**` `mod tests`, engine ports, LLM client wiremock).
 - [ ] All integration tests pass (`tests/*.rs`), including:

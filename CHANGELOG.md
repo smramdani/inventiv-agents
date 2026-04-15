@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-04-13
+
+### Fixed
+- **Integration tests / RLS**: `tests/common::app_database_url()` now connects as `inventiv_app` even when `DATABASE_URL` points at the local superuser (`inventiv_user`), which bypasses RLS (`BYPASSRLS`). Host, port, database name, and query string are preserved; use `INVENTIV_TEST_DATABASE_URL` for a fully explicit override (documented in `.env.example`).
+
 ### Changed
-- **Dev tooling**: `make check-local` / `./scripts/dev/dev.sh check-local` — `fmt` + `clippy` + `cargo test --lib` without Docker (for machines where `docker` is not on `PATH`); `make check` unchanged (full tests still need Docker). Documented in `make help`, README (MVP note), and `specify/mvp-engine-validation.md`.
+- **Dev tooling**: `make check` / `dev.sh check` runs `fmt` + `clippy`, then full `cargo test` if Docker/Compose works, else falls back to `cargo test --lib` with a notice. `check-local` forces lib-only. `lib.sh`: `inventiv_has_docker`. Docs: `make help`, README, `mvp-engine-validation`, `testing-checkpoints`.
 - **Roadmap (Spec Kit)**: `specify/plan.md` splits **M4a** (MVP engine: LLM + SSE, no tools / no MCP) vs **M4b** (MCP, persistence, full reasoning loop — deferred). `specify/spec.md` §7 and `specify/tasks/004_milestone_4.md` aligned; Phases 4–6 marked deferred until **`specify/mvp-engine-validation.md`** sign-off. **`specify/testing-checkpoints.md`** prioritizes M4a MVP gates.
 - **`/org/register`**: set `app.current_org_id` in the same transaction before inserts so registration succeeds under RLS (`inventiv_app`).
 - **`/auth/login`**: use `lookup_user_for_login` instead of a direct `users` select blocked by RLS without org context.
@@ -29,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Spec Kit — Milestone 4**: Task list `specify/tasks/004_milestone_4.md` (Agentic Engine: LLM ports, SSE API, MCP client, reasoning loop, run/metrics persistence, XIV gates); `specify/plan.md` links M4 to that file; `specify/spec.md` §7 summarizes M4 technical scope and US.4 linkage.
 - **Constitution 1.4.0**: Principle **XV** (immutable release artifact, dev→staging→prod promotion, externalized configuration and secrets, CI/CD pipeline obligations); **XII** and **XIV** cross-references; **Development Workflow** step 7 for CD.
 - **Local & cloud Postgres layout**: `docker-compose.yml` with healthchecks, stable service/container names, named volumes, and `inventiv` bridge network; `.env.example` for Compose + app variables; `scripts/db/apply-migrations.sh`; README section for local workflow and Scaleway-oriented staging/production notes.
-- **Integration test config**: `tests/common/mod.rs` and `DATABASE_URL` override for CI/staging databases.
+- **Integration test config**: `tests/common/mod.rs`; optional `INVENTIV_TEST_DATABASE_URL`; superuser `DATABASE_URL` values are rewritten to `inventiv_app` for RLS-correct tests.
 - **Governance & SDD**: Constitution **1.3.0** with **XIV — Definition of Done by Layer** (vertical slice, database, domain, API, front-end when applicable, cross-cutting); extended **XII** and **Development Workflow** for Spec Kit checklist/analyze gates. Mirror at `.specify/memory/constitution.md` for `/speckit.plan` and `/speckit.analyze`.
 - **Spec Kit templates**: Optional layer tags on generated tasks; checklist template requires a Constitution XIV layer section when relevant.
 - **Milestone 3 tasks**: Layer definition-of-done gate section in `specify/tasks/003_milestone_3.md` (front-end marked N/A for M3 per plan).

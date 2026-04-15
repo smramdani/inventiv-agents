@@ -36,6 +36,11 @@ inventiv_require_docker() {
   fi
 }
 
+# True (exit 0) when docker and compose look usable — does not start containers.
+inventiv_has_docker() {
+  command -v docker >/dev/null 2>&1 && $DC version >/dev/null 2>&1
+}
+
 inventiv_docker_up() {
   inventiv_require_docker
   inventiv_ensure_env

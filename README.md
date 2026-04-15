@@ -137,7 +137,7 @@ make cargo ARGS='test --lib'
 
 Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targets`.
 
-**MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). If Docker is not on your `PATH`, use **`make check-local`** instead of **`make check`** (fmt + clippy + unit tests in the library only).
+**MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). **`make check`** runs the full test suite when Docker is available; if Docker is missing, it automatically falls back to **library unit tests only** (same scope as `make check-local`). Use **`make check-local`** to force that path without probing Docker.
 
 ### Docker troubleshooting (local)
 

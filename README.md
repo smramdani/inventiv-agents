@@ -137,6 +137,8 @@ make cargo ARGS='test --lib'
 
 Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targets`.
 
+**MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**).
+
 ### Docker troubleshooting (local)
 
 - **`Cannot connect to the Docker daemon`**: start Docker Desktop (macOS/Windows) or `sudo systemctl start docker` on Linux.
@@ -199,4 +201,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; Milestone 4 engine in progress (SSE completion shipped; MCP / persistence next per `specify/tasks/004_milestone_4.md`).
+**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; **M4a** (LLM + SSE, no tools/MCP) — validate with `specify/mvp-engine-validation.md`; **M4b** (MCP, persistence, full loop) deferred per `specify/plan.md`.

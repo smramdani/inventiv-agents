@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Roadmap (Spec Kit)**: `specify/plan.md` splits **M4a** (MVP engine: LLM + SSE, no tools / no MCP) vs **M4b** (MCP, persistence, full reasoning loop — deferred). `specify/spec.md` §7 and `specify/tasks/004_milestone_4.md` aligned; Phases 4–6 marked deferred until **`specify/mvp-engine-validation.md`** sign-off. **`specify/testing-checkpoints.md`** prioritizes M4a MVP gates.
 - **`/org/register`**: set `app.current_org_id` in the same transaction before inserts so registration succeeds under RLS (`inventiv_app`).
 - **`/auth/login`**: use `lookup_user_for_login` instead of a direct `users` select blocked by RLS without org context.
 - **README**: local development documents `make help`, simple Makefile verbs (`build`, `release`, `start`, `stop`, …), and deploy stub targets; manual migration list includes `005`.
@@ -16,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.gitignore`**: ignore `.env` (use committed `.env.example` as template).
 
 ### Added
+- **`specify/mvp-engine-validation.md`**: Checklist and sign-off for **M4a** (engine without tools/MCP): automated `make check`, integration coverage, optional manual SSE with real test provider; explicit deferral of MCP / run persistence until M4b.
 - **Milestone 4 (API, Phase 3 — Spec Kit T4.7–T4.9)**: `POST /org/agents/:agent_id/complete/stream` returns SSE (`meta`, `delta`, `usage`, `error`, `done`); `trace_id` in structured logs and in `meta` / `X-Trace-ID`; handler `src/api/handlers/engine.rs`; deps `async-stream`, `futures-core`; integration test `tests/sse_agent_stream_integration.rs`.
 - **Migration `005_login_lookup_and_register_rls.sql`**: `lookup_user_for_login(email)` (`SECURITY DEFINER`) so `/auth/login` works under RLS with role `inventiv_app`.
 - **HTTP integration tests**: `tests/identity_http.rs` (`/org/register`, `/auth/login`, `/auth/whoami`, 401 smoke for `/org/users`, `/org/groups`, `/telemetry/frontend`); extended `tests/agents_api.rs` (GET `/org/providers` auth, full registry list/create/link flow). Helpers `insert_admin_user` / `admin_bearer_token` in `tests/common`.

@@ -39,7 +39,11 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to deploy safe, 
 
 ## 7. Milestone M4 (technical scope, v1.0.0 path)
 
-Headless **agentic engine** (no cockpit UI in M4): OpenAI-compatible **LLM streaming (SSE)**, minimal **MCP client** for skills registered in M3, **reasoning loop** orchestration, and **persistence of runs/metrics** with the same multi-tenant RLS model. Enables **US.4** for API clients before **M5** adds the secure chat cockpit and session sharing UX. Detailed tasks: `specify/tasks/004_milestone_4.md`.
+**M4a (MVP — current)**: Headless **agentic engine** without tool execution and **without MCP**: OpenAI-compatible **LLM**, org-scoped **provider resolution**, **SSE** completion endpoint, **TraceID** / structured logging. Delivers a minimal **US.4** slice (single-turn completion) for API clients before **M5** cockpit.
+
+**M4b (next)**: **MCP client**, toolbelt in the **reasoning loop**, and **persistence of runs/metrics** (RLS) — see `specify/plan.md` roadmap row **M4b** and deferred phases in `specify/tasks/004_milestone_4.md`.
+
+**MVP validation checklist**: `specify/mvp-engine-validation.md`.
 
 ## 8. Open Source & License
 - **License**: AGPL-3.0.

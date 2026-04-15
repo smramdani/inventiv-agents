@@ -1,15 +1,17 @@
-# Milestone 4: The Agentic Engine (LLM streaming, MCP client, reasoning loop)
+# Milestone 4: The Agentic Engine (LLM + SSE first; MCP / tools deferred)
 
-**Prerequisites**: M3 complete (`specify/tasks/003_milestone_3.md`). **Plan**: `specify/plan.md` §2–3.
+**Prerequisites**: M3 complete (`specify/tasks/003_milestone_3.md`). **Plan**: `specify/plan.md` §2–3 (roadmap **M4a** = MVP without tools/MCP; **M4b** = MCP + persistence + full loop).
+
+**MVP focus (now)**: Validate **Phases 1–3** only — see **`specify/mvp-engine-validation.md`**. Do **not** implement Phase 4 (MCP) until that checklist is signed off.
 
 ## Layer definition of done (Constitution XIV)
 
 Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ### Vertical slice
-- **Story linkage**: Work traces to **US.4** (user starts a session with an agent) for the **headless** path: authenticated user invokes a configured agent and receives a streamed model response; **US.1–US.3** supply providers, skills, and agents already persisted in M3.
-- **Independent value**: A client can call a documented HTTP API (including SSE) without the M5 cockpit UI; behavior is testable with `curl` or integration tests.
-- **Artifacts**: `specify/spec.md`, `specify/plan.md`, and this file stay aligned (XII); scope changes are updated in spec/plan first.
+- **Story linkage (M4a MVP)**: **US.4** narrowed to **single-turn, no-tool** use: authenticated user invokes a configured agent (with LLM provider) and receives an **SSE** model response. **US.1–US.3** supply provider + agent registration. **US.2** (MCP skills in the loop) is **out of scope** until M4b.
+- **Independent value**: A client can call the streaming completion API without M5 UI, without MCP, and without executing skills — demonstrable with `curl` + integration tests.
+- **Artifacts**: `specify/spec.md`, `specify/plan.md`, `specify/mvp-engine-validation.md`, and this file stay aligned (XII); scope changes are updated in spec/plan first.
 
 ### Database `[DB]`
 - **T4.x** satisfies: migrations reviewed; **RLS + FORCE RLS** on any new tenant tables; FK and uniqueness match execution and audit needs; token/cost persistence strategy documented (align with `metrics` / observability in spec §3).
@@ -27,8 +29,8 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 - **N/A for M4** (no cockpit UI; M5 owns chat UX and session sharing UI). Revisit XIV FE gates at **M5**.
 
 ### Cross-cutting
-- **Security**: MCP and LLM calls use org-scoped configuration only; secrets never logged; timeouts and payload limits on outbound HTTP.
-- **Quality**: `cargo fmt`, `cargo clippy`, `cargo test` green; integration tests cover SSE happy path and at least one auth/RLS failure.
+- **Security (M4a)**: LLM calls use org-scoped provider configuration only; secrets never logged; timeouts and payload limits on outbound HTTP. **MCP / tool sandboxing** applies from **M4b** onward.
+- **Quality**: `cargo fmt`, `cargo clippy`, `cargo test` green; integration tests cover SSE happy path and auth/RLS as in existing suites. **MVP sign-off**: `specify/mvp-engine-validation.md`.
 - **Release (XV)**: No environment-specific branching for deployment; feature flags only via config if needed.
 
 ---
@@ -62,14 +64,16 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 **Purpose**: Real-time streaming to clients per plan §3.
 
 - [x] **T4.7** `[API]` Add Axum route(s) for **streaming completion** (e.g. `POST /org/.../agents/{id}/complete/stream` or name per REST review)—document contract (headers, SSE event names, terminal event).
-- [x] **T4.8** `[API]` Ensure **TraceID** propagation from request extension through LLM and MCP spans (IX).
+- [x] **T4.8** `[API]` Ensure **TraceID** propagation from request extension through LLM spans (IX). **MCP spans**: deferred to M4b.
 - [x] **T4.9** `[API]` Integration test: authenticated user receives SSE events for a minimal “no tools” completion (may use test double for LLM).
 
-**Checkpoint**: `POST /org/agents/:agent_id/complete/stream` documented in README; `tests/sse_agent_stream_integration.rs`; structured logs include `trace_id` on stream open and LLM completion (MCP spans deferred to Phase 4).
+**Checkpoint**: `POST /org/agents/:agent_id/complete/stream` documented in README; `tests/sse_agent_stream_integration.rs`; structured logs include `trace_id` on stream open and LLM completion.
 
 ---
 
-## Phase 4 — MCP client (minimal vertical slice)
+## Phase 4 — MCP client (minimal vertical slice) — **DEFERRED (M4b)**
+
+**Status**: **Not in MVP.** Implement only after **`specify/mvp-engine-validation.md`** is signed off.
 
 **Purpose**: JSON-RPC over HTTP(S) toward MCP servers registered as skills (M3).
 
@@ -81,9 +85,9 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 5 — Persistence for runs & metrics
+## Phase 5 — Persistence for runs & metrics — **DEFERRED (M4b)**
 
-**Purpose**: Align with spec §3 usage tracking and US.5 groundwork.
+**Purpose**: Align with spec §3 usage tracking and US.5 groundwork. **Out of MVP** (tokens already exposed in SSE `usage` for M4a).
 
 - [ ] **T4.13** `[DB]` Add migration(s) for **execution or session run** tables (naming per implementation): `organization_id`, `agent_id`, `user_id`, `trace_id`, status, token fields, timestamps; **RLS** + **FORCE RLS**.
 - [ ] **T4.14** `[Infra]` Repository for persisting runs and per-step metrics; **`set_rls_context`** on all queries.
@@ -93,33 +97,39 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 6 — End-to-end reasoning loop orchestration
+## Phase 6 — End-to-end reasoning loop orchestration — **DEFERRED (M4b)**
 
-**Purpose**: Connect loop + LLM + optional MCP + persistence in one service path.
+**Purpose**: Connect loop + LLM + MCP + persistence in one service path.
 
 - [ ] **T4.16** `[Domain]` / `[Infra]` Application service orchestrating the loop for one user message (happy path + tool failure + LLM failure).
 - [ ] **T4.17** `[API]` **[US.4]** Single entry route documented in `README.md` (minimal example for streaming agent chat).
 - [ ] **T4.18** Cross-cutting: update **`CHANGELOG.md`** and **`README.md`** for new endpoints and env vars; run **`make check`** (or equivalent) before merge.
 
-**Checkpoint**: XIV gates above satisfied; M4 marked done in `specify/plan.md` when this phase is complete.
+**Checkpoint**: XIV gates satisfied for M4b; update `specify/plan.md` when Phases 4–6 ship.
 
 ---
 
-## Validation (milestone sign-off)
+## Validation — **M4a MVP** (current)
 
-- [ ] Integration test: **US.4-style** flow—create org/user context, use M3 APIs to register provider + agent, then call M4 streaming endpoint and assert SSE + persisted trace/metrics.
+Use **`specify/mvp-engine-validation.md`** as the authoritative checklist (automated + manual SSE without MCP).
+
+- [ ] Automated: `make check` (or equivalent) — all tests green, including SSE + LLM resolver integration tests.
+- [ ] Manual: `curl -N` SSE completion with a real test provider (optional but recommended once per environment).
+- [ ] Sign-off line completed in `mvp-engine-validation.md`.
+
+## Validation — **M4b** (after MVP; includes MCP + persistence)
+
+- [ ] Integration test: **US.4-style** flow with **optional tool** path + persisted run/metrics where implemented.
 - [ ] RLS test: cross-org denial on execution/run tables.
-- [ ] Manual or scripted note: document how to run against a real MCP server in dev (without committing secrets).
+- [ ] Manual: MCP stub or sandbox (no secrets in repo).
 
 ---
 
 ## Dependencies (summary)
 
-1. Phase 1 before 2–6.  
-2. Phase 2 before 3 (streaming needs LLM adapter) and before 6.  
-3. Phase 4 can overlap Phase 2 after T4.2–T4.3 are stable.  
-4. Phase 5 before final persistence assertions in Phase 6.  
-5. Phase 6 last.
+1. **M4a**: Phases **1 → 2 → 3** only; validate with **`mvp-engine-validation.md`** before starting M4b.  
+2. **M4b**: Phase **4** (MCP) can start after MVP sign-off; **5** before persistence-heavy assertions in **6**.  
+3. Phase 2 before Phase 3 (streaming needs LLM adapter).
 
 ---
 
@@ -127,3 +137,4 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 - If scope is too large for one increment, split behind feature flags **via configuration** (XV), not compile-time `env == "prod"`.
 - Full **session sharing** and cockpit UX remain **M5** per `specify/plan.md`.
+- The domain trait **`McpInvocationPort`** (Phase 1) remains a boundary for M4b; **no MCP adapter** is required for M4a MVP sign-off.

@@ -27,7 +27,9 @@ inventiv_load_env() {
 
 inventiv_require_docker() {
   if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker is not on PATH. Install Docker Desktop / Engine and retry." >&2
+    echo "Docker is not on PATH — \`make ready\` / \`make start\` need the Docker CLI + Compose v2." >&2
+    echo "  macOS: install Docker Desktop (https://www.docker.com/products/docker-desktop/), open it once so the \`docker\` symlink is installed, then open a new terminal and run:  docker version" >&2
+    echo "  Without Docker: run Postgres (and Redis if you need it) yourself, set DATABASE_URL in .env, apply ./scripts/db/apply-migrations.sh; use \`make check-local\` for fmt+clippy+unit tests only." >&2
     exit 1
   fi
   if ! $DC version >/dev/null 2>&1; then

@@ -29,6 +29,7 @@ Simple verbs (easy to remember)
   make check           fmt + clippy + full cargo test when Docker works; otherwise same as check-local (lib unit tests only).
   make check-local     fmt + clippy + cargo test --lib only (never starts Docker).
   make full            Strict migrate + full test suite + release build (CI-like locally).
+  make m4a-smoke       M4a Spec Kit manual gate: curl register→login→provider→agent→SSE (needs API + M4A_LLM_API_KEY).
   make fmt             Format Rust sources (cargo fmt).
   make lint            Clippy only (cargo clippy --all-targets -D warnings).
   make clean           cargo clean

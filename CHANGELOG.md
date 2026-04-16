@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **M4a MVP smoke**: `scripts/dev/m4a-mvp-smoke.sh` and `make m4a-smoke` / `./scripts/dev/dev.sh m4a-smoke` — headless register → login → provider+key → agent → SSE validation (requires running API and `M4A_LLM_API_KEY`). Documented in README, `specify/mvp-engine-validation.md`, and `specify/testing-checkpoints.md`.
+
 ## [0.1.1] - 2026-04-13
 
 ### Fixed

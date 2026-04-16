@@ -2,6 +2,14 @@
 
 This checklist is the **current** acceptance target for Milestone **M4 (MVP slice)** per roadmap update: prove identity, registry, LLM resolution, and **SSE completion** end-to-end before implementing MCP clients, tool execution, or run persistence (Phases 4–6 of `004_milestone_4.md`).
 
+## How to run it (order)
+
+1. Bring up infra and migrations (`make ready` or equivalent), then start the API (`make run` in a dedicated terminal).
+2. Run **`make check`** on a machine with Docker so the full **`tests/*.rs`** suite passes (automated gate).
+3. Run the **headless smoke** against your running API (manual gate): `make m4a-smoke` with **`M4A_LLM_API_KEY`** set to a **test** provider secret (see script header in `scripts/dev/m4a-mvp-smoke.sh`). This covers register → login → provider + key → agent → SSE in one shot.
+4. Optionally repeat steps 1–3 of the **Manual** section by hand (`curl`) if you need to inspect headers or swap providers.
+5. Fill **Sign-off** when satisfied.
+
 ## Preconditions
 
 - [ ] Docker Postgres + Redis up (`make ready` or equivalent).
@@ -30,6 +38,8 @@ For the **full** gate (including `tests/*.rs`), run **`make check`** on a machin
 ## Manual — headless MVP (no MCP, single user message)
 
 Use a **test** API key and model on your provider (never commit secrets).
+
+**Shortcut (recommended):** with the API running, `export M4A_LLM_API_KEY=…` then `make m4a-smoke` (same checks as steps 1–5 for a default OpenAI-compatible host; override `M4A_LLM_BASE_URL` / `M4A_LLM_MODEL` / `M4A_API_BASE` if needed).
 
 1. [ ] **Register + login** (or seed org + admin in DB) — obtain JWT.
 2. [ ] **Create LLM provider** with `base_url` + `api_key` pointing to a compatible endpoint (or tunnel to wiremock).

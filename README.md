@@ -192,6 +192,17 @@ curl -N -X POST "http://localhost:8080/org/agents/<AGENT_UUID>/complete/stream" 
 
 SSE events (in order on success): `meta` → `delta` → `usage` → `done`. See doc comments on `post_agent_complete_stream` in `src/api/handlers/engine.rs` for the exact JSON shape per event.
 
+### M4a MVP smoke (Spec Kit gate)
+
+With **Postgres migrated** and the API running (`make run` in another terminal), exercise register → login → provider (with key) → agent → SSE in one command:
+
+```bash
+export M4A_LLM_API_KEY="sk-..."   # test key only; never commit
+make m4a-smoke
+```
+
+Defaults: `M4A_API_BASE=http://127.0.0.1:8080`, `M4A_LLM_BASE_URL=https://api.openai.com`, `M4A_LLM_MODEL=gpt-4o-mini`. See `specify/mvp-engine-validation.md` for the full checklist and sign-off.
+
 ## 🤝 Contribution
 
 This project is Open Source under the **AGPL-3.0** license. We welcome contributions!
@@ -201,4 +212,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.0 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; **M4a** (LLM + SSE, no tools/MCP) — validate with `specify/mvp-engine-validation.md`; **M4b** (MCP, persistence, full loop) deferred per `specify/plan.md`.
+**Version**: 0.1.1 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; **M4a** (LLM + SSE, no tools/MCP) — validate with `specify/mvp-engine-validation.md` and `make m4a-smoke`; **M4b** (MCP, persistence, full loop) deferred per `specify/plan.md`.

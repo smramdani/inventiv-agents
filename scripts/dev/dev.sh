@@ -32,6 +32,7 @@ Commands:
   check      fmt + clippy + full cargo test when Docker is available; otherwise fmt + clippy + cargo test --lib (same as check-local)
   check-local Load .env + fmt --check + clippy -D warnings + cargo test --lib (never uses Docker)
   full       Full pipeline: up + migrate (strict) + cargo test + cargo build --release
+  m4a-smoke  M4a MVP manual gate (curl): register → login → provider+key → agent → SSE (needs API up + M4A_LLM_API_KEY)
 
 Environment:
   DOCKER_COMPOSE   Override Compose invocation (default: "docker compose")
@@ -40,6 +41,7 @@ Examples:
   ./scripts/dev/dev.sh ready && ./scripts/dev/dev.sh run
   ./scripts/dev/dev.sh run -- --help
   ./scripts/dev/with-env.sh cargo test --test identity_rls
+  M4A_LLM_API_KEY=sk-... ./scripts/dev/dev.sh m4a-smoke
 USAGE
 }
 
@@ -151,6 +153,10 @@ main() {
       ;;
     full)
       bash "$INVENTIV_ROOT/scripts/dev/test-local-full.sh"
+      ;;
+    m4a-smoke)
+      inventiv_load_env
+      bash "$INVENTIV_ROOT/scripts/dev/m4a-mvp-smoke.sh" "$@"
       ;;
     *)
       echo "Unknown command: $cmd" >&2

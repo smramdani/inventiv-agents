@@ -23,7 +23,7 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 |------|--------|
 | Automated (full) | `make check` with Docker running — includes `tests/*.rs` (LLM resolver, SSE, HTTP, RLS). |
 | Automated (no Docker) | `make check` still runs `fmt` + `clippy`, then falls back to `cargo test --lib`. Use `make check-local` to skip the Docker probe entirely. |
-| Manual (recommended once per env) | `curl -N` on `POST /org/agents/<id>/complete/stream` with a real **test** provider key (see README). |
+| Manual (recommended once per env) | `make m4a-smoke` with **`M4A_LLM_API_KEY`** (see `scripts/dev/m4a-mvp-smoke.sh`), or `curl -N` on `POST /org/agents/<id>/complete/stream` (README). |
 | Gate | **Do not** start MCP client / tool orchestration work until MVP checklist is signed off (roadmap **M4b**). |
 
 ## M4b — after MVP (MCP, persistence, full loop)

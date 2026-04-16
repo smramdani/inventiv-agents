@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Full local verification: Docker Postgres + Redis, migrations (strict), Rust tests, release build.
+# Full local verification: Postgres (Docker Compose or host), migrations (best-effort),
+# Rust tests, release build.
 # Run from repository root: ./scripts/dev/test-local-full.sh
 # Same as: ./scripts/dev/dev.sh full
 
@@ -9,17 +10,16 @@ cd "$ROOT"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/dev/lib.sh"
 
-inventiv_require_docker
 inventiv_ensure_env
 set -a
 # shellcheck disable=SC1091
 source "$ROOT/.env"
 set +a
 
-inventiv_docker_up
+inventiv_ensure_local_database
 
-echo "==> Applying SQL migrations (strict; use ./scripts/db/reset-local-db.sh if schema conflicts)"
-bash "$ROOT/scripts/db/apply-migrations.sh"
+echo "==> Applying SQL migrations (best-effort; exit 2 = schema already present)"
+inventiv_migrate_try
 
 echo "==> Running Rust unit + integration tests"
 export DATABASE_URL JWT_SECRET

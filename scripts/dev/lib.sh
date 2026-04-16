@@ -8,6 +8,30 @@ export INVENTIV_ROOT
 
 export DC="${DOCKER_COMPOSE:-docker compose}"
 
+# TCP check to Postgres (uses POSTGRES_HOST / POSTGRES_PORT after caller loads .env).
+inventiv_postgres_tcp_ok() {
+  local host="${POSTGRES_HOST:-127.0.0.1}"
+  local port="${POSTGRES_PORT:-5432}"
+  python3 -c "import socket,sys; h,p=sys.argv[1],int(sys.argv[2]); s=socket.create_connection((h,p),timeout=3); s.close()" "$host" "$port" >/dev/null 2>&1
+}
+
+# Start Compose db+redis when Docker works; otherwise require an open Postgres port on the host.
+inventiv_ensure_local_database() {
+  inventiv_ensure_env
+  inventiv_load_env
+  if inventiv_has_docker; then
+    inventiv_docker_up
+    return 0
+  fi
+  echo "==> Docker not on PATH; using host Postgres at ${POSTGRES_HOST:-127.0.0.1}:${POSTGRES_PORT:-5432} (see POSTGRES_* / MIGRATE_DATABASE_URL in .env)." >&2
+  if inventiv_postgres_tcp_ok; then
+    echo "==> Postgres TCP port is reachable" >&2
+    return 0
+  fi
+  echo "Cannot reach Postgres. Install Docker Desktop and retry, or start a local Postgres and align POSTGRES_HOST/POSTGRES_PORT with .env." >&2
+  exit 1
+}
+
 inventiv_ensure_env() {
   cd "$INVENTIV_ROOT" || exit 1
   if [[ ! -f .env ]]; then
@@ -27,9 +51,9 @@ inventiv_load_env() {
 
 inventiv_require_docker() {
   if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker is not on PATH — \`make ready\` / \`make start\` need the Docker CLI + Compose v2." >&2
-    echo "  macOS: install Docker Desktop (https://www.docker.com/products/docker-desktop/), open it once so the \`docker\` symlink is installed, then open a new terminal and run:  docker version" >&2
-    echo "  Without Docker: run Postgres (and Redis if you need it) yourself, set DATABASE_URL in .env, apply ./scripts/db/apply-migrations.sh; use \`make check-local\` for fmt+clippy+unit tests only." >&2
+    echo "Docker is not on PATH — this command needs the Docker CLI + Compose v2." >&2
+    echo "  macOS: install Docker Desktop (https://www.docker.com/products/docker-desktop/), open it once, then:  docker version" >&2
+    echo "  For \`make ready\` / \`make run\` / \`make test\` without Docker: start Postgres locally, set POSTGRES_* + DATABASE_URL in .env, install \`psql\` (e.g. brew install libpq)." >&2
     exit 1
   fi
   if ! $DC version >/dev/null 2>&1; then
@@ -68,7 +92,10 @@ inventiv_docker_up() {
 }
 
 inventiv_docker_down() {
-  inventiv_require_docker
+  if ! inventiv_has_docker; then
+    echo "Docker/Compose not available; nothing to stop for the Compose stack." >&2
+    return 0
+  fi
   cd "$INVENTIV_ROOT" || exit 1
   $DC down "$@"
 }

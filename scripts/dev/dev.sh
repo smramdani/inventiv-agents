@@ -20,16 +20,16 @@ Commands:
   help       Show this message
   doctor     Check Docker, Compose, .env, and Postgres connectivity
   env        Ensure .env exists (copy from .env.example if missing)
-  up         Start Postgres + Redis (wait until healthy)
-  down       Stop stack (docker compose down)
+  up         Start Postgres + Redis via Compose (requires Docker)
+  down       Stop Compose stack (no-op if Docker is unavailable)
   migrate    Apply SQL migrations (fails if DB unreachable; exits 2 if schema exists — use reset)
   reset      docker compose down -v, then up + migrate (wipes local DB volume)
-  ready      up + migrate (treat “schema exists” as OK)
+  ready      Ensure Postgres (Compose or host TCP) + migrate_try (schema exists = OK)
   test       up + migrate_try + cargo test (loads .env)
   test-lib   Load .env + cargo test --lib only (no Docker required for unit tests)
   run        up + migrate_try + cargo run (remaining args forwarded like normal cargo run)
   run-rel    up + migrate_try + cargo run --release (args forwarded)
-  check      fmt + clippy + full cargo test when Docker is available; otherwise fmt + clippy + cargo test --lib (same as check-local)
+  check      fmt + clippy + full cargo test when Docker or host Postgres is reachable; otherwise fmt + clippy + cargo test --lib
   check-local Load .env + fmt --check + clippy -D warnings + cargo test --lib (never uses Docker)
   full       Full pipeline: up + migrate (strict) + cargo test + cargo build --release
   m4a-smoke  M4a MVP manual gate (curl): register → login → provider+key → agent → SSE (needs API up + M4A_LLM_API_KEY)
@@ -50,28 +50,62 @@ cmd_doctor() {
   inventiv_load_env
   echo "==> Doctor"
   echo "  Repository: $INVENTIV_ROOT"
+  local ok=0
+
   if command -v docker >/dev/null 2>&1; then
     echo "  Docker: OK ($(docker --version))"
+    if $DC version >/dev/null 2>&1; then
+      echo "  Compose: OK ($($DC version))"
+      if $DC exec -T db pg_isready -h 127.0.0.1 -p 5432 -U "${POSTGRES_USER:-inventiv_user}" -d "${POSTGRES_DB:-inventiv_agents}" >/dev/null 2>&1; then
+        echo "  Postgres (Compose db): reachable"
+        ok=1
+      else
+        echo "  Postgres (Compose db): not ready (start with: make up)"
+      fi
+    else
+      echo "  Compose: MISSING or broken ($DC)"
+    fi
   else
-    echo "  Docker: MISSING from PATH"
-    return 1
+    echo "  Docker: MISSING from PATH (optional if you use host Postgres + psql)"
   fi
-  if $DC version >/dev/null 2>&1; then
-    echo "  Compose: OK ($($DC version))"
-  else
-    echo "  Compose: MISSING ($DC)"
-    return 1
+
+  if [[ "$ok" -eq 0 ]]; then
+    echo "  Checking host Postgres ${POSTGRES_HOST:-127.0.0.1}:${POSTGRES_PORT:-5432}..."
+    if inventiv_postgres_tcp_ok; then
+      echo "  Postgres (TCP): port open"
+      if command -v psql >/dev/null 2>&1 && psql_ping_doctor; then
+        echo "  psql (superuser / migrate role): login OK"
+        ok=1
+      elif command -v psql >/dev/null 2>&1; then
+        echo "  psql: present but login failed (check POSTGRES_* or MIGRATE_DATABASE_URL)"
+      else
+        echo "  psql: not on PATH (install libpq for host-only migrations)"
+      fi
+    else
+      echo "  Postgres (TCP): port not reachable"
+    fi
   fi
+
   echo "  .env: OK"
   echo "  DATABASE_URL: ${DATABASE_URL:0:48}..."
-  inventiv_docker_up >/dev/null
-  if $DC exec -T db pg_isready -h 127.0.0.1 -p 5432 -U "${POSTGRES_USER:-inventiv_user}" -d "${POSTGRES_DB:-inventiv_agents}" >/dev/null 2>&1; then
-    echo "  Postgres: reachable"
-  else
-    echo "  Postgres: NOT reachable"
-    return 1
+
+  if [[ "$ok" -eq 1 ]]; then
+    echo "==> Doctor: database access OK (Compose and/or host)"
+    return 0
   fi
-  echo "==> All checks passed"
+  echo "==> Doctor: failed — start Docker stack or local Postgres, then retry" >&2
+  return 1
+}
+
+psql_ping_doctor() {
+  if [[ -n "${MIGRATE_DATABASE_URL:-}" ]]; then
+    psql "$MIGRATE_DATABASE_URL" -tAc "SELECT 1" >/dev/null 2>&1
+  else
+    PGPASSWORD="${POSTGRES_PASSWORD:-inventiv_password}" psql \
+      -h "${POSTGRES_HOST:-127.0.0.1}" -p "${POSTGRES_PORT:-5432}" \
+      -U "${POSTGRES_USER:-inventiv_user}" -d "${POSTGRES_DB:-inventiv_agents}" \
+      -tAc "SELECT 1" >/dev/null 2>&1
+  fi
 }
 
 cmd_migrate_strict() {
@@ -106,11 +140,11 @@ main() {
       bash "$INVENTIV_ROOT/scripts/db/reset-local-db.sh"
       ;;
     ready)
-      inventiv_docker_up
+      inventiv_ensure_local_database
       inventiv_migrate_try
       ;;
     test)
-      inventiv_docker_up
+      inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
       cargo test "$@"
@@ -120,13 +154,13 @@ main() {
       cargo test --lib "$@"
       ;;
     run)
-      inventiv_docker_up
+      inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
       cargo run "$@"
       ;;
     run-rel)
-      inventiv_docker_up
+      inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
       cargo run --release "$@"
@@ -139,9 +173,13 @@ main() {
         inventiv_docker_up
         inventiv_migrate_try
         cargo test "$@"
+      elif inventiv_postgres_tcp_ok; then
+        echo "==> Docker not used; host Postgres reachable — running migrations + full integration tests." >&2
+        inventiv_migrate_try
+        cargo test "$@"
       else
-        echo "==> Docker/Compose not on PATH or not working; running cargo test --lib only (no tests/*.rs integration suite)." >&2
-        echo "==> Install Docker Desktop, ensure 'docker compose version' works, then re-run for full checks." >&2
+        echo "==> Docker/Compose not available and Postgres TCP (${POSTGRES_HOST:-127.0.0.1}:${POSTGRES_PORT:-5432}) not reachable; running cargo test --lib only." >&2
+        echo "==> Start Docker Desktop, or start local Postgres + psql (see README / .env.example), then re-run for full checks." >&2
         cargo test --lib "$@"
       fi
       ;;

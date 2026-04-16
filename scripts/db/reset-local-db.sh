@@ -10,6 +10,12 @@ cd "$ROOT"
 
 DC="${DOCKER_COMPOSE:-docker compose}"
 
+if ! command -v docker >/dev/null 2>&1 || ! $DC version >/dev/null 2>&1; then
+  echo "reset-local-db requires Docker and Compose to remove named volumes and recreate the db service." >&2
+  echo "Without Docker: drop and recreate your database manually, then run ./scripts/db/apply-migrations.sh" >&2
+  exit 1
+fi
+
 echo "==> Stopping stack and removing volumes (Postgres + Redis data will be erased)"
 $DC down -v
 

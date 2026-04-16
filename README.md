@@ -1,6 +1,6 @@
 # InventivAgents
 
-**Enterprise-Ready Open Source Agentic AI Platform (v0.1.0)**
+**Enterprise-Ready Open Source Agentic AI Platform (v0.1.1)**
 
 InventivAgents is a high-performance, secure, and user-friendly platform designed for SMEs to deploy, manage, and scale AI agents within their organization. Built with **Rust**, it prioritizes safety, modularity, and control.
 
@@ -35,8 +35,8 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 
 ### Prerequisites
 - [Rust](https://www.rust-lang.org/tools/install) (latest stable)
-- [Docker](https://www.docker.com/get-started) & Docker Compose
-- [GitHub CLI](https://cli.github.com/) (for contributions)
+- **Postgres**: either [Docker Desktop](https://www.docker.com/get-started) + Compose **or** a local / managed PostgreSQL (**pgvector** required for migrations) plus **`psql`** on your `PATH` (e.g. macOS: `brew install libpq`)
+- [GitHub CLI](https://cli.github.com/) (optional, for contributions)
 
 ### Local Development
 
@@ -60,7 +60,9 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    ```
    The `--wait` flag blocks until **healthchecks** pass. If your Compose version is older and rejects `--wait`, run `docker compose up -d db redis` and wait until `docker compose ps` shows `healthy` for `db` (and `redis`).
 
-4. **Apply database migrations** (ordered `migrations/*.sql` via the superuser in the container):
+   **Without Docker:** run PostgreSQL locally (same port as `POSTGRES_PORT` in `.env`, typically `5432`), ensure extensions **uuid-ossp** and **vector** are available, and align `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` with your instance. Install the client **`psql`**. Then **`make ready`** probes the TCP port and applies migrations via `psql` (or set **`MIGRATE_DATABASE_URL`** to a superuser URL). The API does not require Redis yet; Compose still starts Redis for future use.
+
+4. **Apply database migrations** (ordered `migrations/*.sql`; **Docker** exec or **host `psql`** — see `./scripts/db/apply-migrations.sh`):
    ```bash
    ./scripts/db/apply-migrations.sh
    ```

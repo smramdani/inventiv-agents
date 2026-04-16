@@ -4,7 +4,7 @@ This checklist is the **current** acceptance target for Milestone **M4 (MVP slic
 
 ## How to run it (order)
 
-1. Bring up infra and migrations (`make ready` or equivalent), then start the API (`make run` in a dedicated terminal).
+1. Bring up infra and migrations (`make ready` or equivalent — works with **Docker Compose** or **host Postgres + `psql`** per README), then start the API (`make run` in a dedicated terminal).
 2. Run **`make check`** on a machine with Docker so the full **`tests/*.rs`** suite passes (automated gate).
 3. Run the **headless smoke** against your running API (manual gate): `make m4a-smoke` with **`M4A_LLM_API_KEY`** set to a **test** provider secret (see script header in `scripts/dev/m4a-mvp-smoke.sh`). This covers register → login → provider + key → agent → SSE in one shot.
 4. Optionally repeat steps 1–3 of the **Manual** section by hand (`curl`) if you need to inspect headers or swap providers.

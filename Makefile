@@ -31,7 +31,7 @@ release-build:
 	@$(WITH) cargo build --release
 	@if [ -n "$(TAG)" ]; then printf '\nHint: record this release in git, e.g.:\n  git tag -a %s -m "Release %s" && git push origin %s\n\n' "$(TAG)" "$(TAG)" "$(TAG)"; fi
 
-# Infra up + best-effort migrations (good "start my day" command).
+# Postgres (Compose or host) + best-effort migrations (good "start my day" command).
 start: ready
 
 stop: down

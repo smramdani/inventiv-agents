@@ -1,6 +1,6 @@
 # InventivAgents
 
-**Enterprise-Ready Open Source Agentic AI Platform (v0.1.1)**
+**Enterprise-Ready Open Source Agentic AI Platform (v0.1.2)**
 
 InventivAgents is a high-performance, secure, and user-friendly platform designed for SMEs to deploy, manage, and scale AI agents within their organization. Built with **Rust**, it prioritizes safety, modularity, and control.
 
@@ -131,6 +131,8 @@ Use one entry point so every machine runs the same sequence (Docker up, optional
 | Run API (release) | `./scripts/dev/dev.sh run-rel` | `make run-rel` |
 | fmt + clippy + test | `./scripts/dev/dev.sh check` | `make check` |
 | Full pipeline (strict migrate + test + release build) | `./scripts/dev/dev.sh full` | `make full` |
+| Docker PATH bootstrap self-test (stub CLI) | `./scripts/dev/verify-docker-bootstrap.sh` | `make verify-bootstrap` |
+| M4a SSE smoke (needs running API + `M4A_LLM_API_KEY`) | `./scripts/dev/m4a-mvp-smoke.sh` | `make m4a-smoke` |
 
 Pass arguments through to `cargo` / the binary where supported, for example:
 
@@ -143,7 +145,7 @@ make cargo ARGS='test --lib'
 
 Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targets`.
 
-**MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). **`make check`** runs the full test suite when Docker is available; if Docker is missing, it automatically falls back to **library unit tests only** (same scope as `make check-local`). Use **`make check-local`** to force that path without probing Docker.
+**MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). **`make check`** runs the full test suite when Docker **or** host Postgres (TCP) is available; if neither is reachable, it falls back to **library unit tests only** (same scope as `make check-local`). Use **`make check-local`** to force that path without probing Docker/Postgres.
 
 ### Docker troubleshooting (local)
 
@@ -218,4 +220,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.1 | **License**: AGPL-3.0 | **Status**: Milestone 3 registry delivered; **M4a** (LLM + SSE, no tools/MCP) — validate with `specify/mvp-engine-validation.md` and `make m4a-smoke`; **M4b** (MCP, persistence, full loop) deferred per `specify/plan.md`.
+**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** engine (LLM + SSE); local dev scripts (Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`). Validate M4a with `specify/mvp-engine-validation.md`. **M4b** deferred per `specify/plan.md`.

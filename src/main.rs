@@ -14,7 +14,10 @@ async fn main() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    tracing::info!("Starting InventivAgents Backend (AGPL-3.0)");
+    tracing::info!(
+        version = env!("CARGO_PKG_VERSION"),
+        "Starting InventivAgents Backend (AGPL-3.0)"
+    );
 
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let db_pool = DatabasePool::connect(&db_url).await?;

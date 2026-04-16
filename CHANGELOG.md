@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-04-14
+
 ### Changed
 - **Docker CLI on macOS**: `scripts/dev/lib.sh` bootstraps `PATH` with Docker Desktop’s **`Docker.app/Contents/Resources/bin`** (and Homebrew locations) before `docker` / `docker compose` checks, so **`make`**, Cursor, and non-login shells find the CLI. Optional **`INVENTIV_DOCKER_BIN`** in `.env`; **`apply-migrations.sh`** / **`reset-local-db.sh`** source the same library. README troubleshooting; **`make doctor`** calls the bootstrap explicitly.
 - **Local dev without Docker**: `make ready`, `make test`, `make run`, `make check`, and `make full` use **`inventiv_ensure_local_database`** — start Compose when Docker works, otherwise require an open Postgres port (`POSTGRES_HOST` / `POSTGRES_PORT`). **`./scripts/db/apply-migrations.sh`** falls back to host **`psql`** using `MIGRATE_DATABASE_URL` or `POSTGRES_*`. **`make doctor`** passes when either Compose or host Postgres + `psql` works; **`make down`** no-ops if Docker is missing. **`reset-local-db`** still requires Docker (volume wipe).
+- **Startup log**: `main` logs the crate **SemVer** at API boot (`CARGO_PKG_VERSION`, constitution version visibility).
 
 ### Added
 - **`make verify-bootstrap`**: `scripts/dev/verify-docker-bootstrap.sh` exercises `INVENTIV_DOCKER_BIN` + `inventiv_has_docker` with a stripped `PATH` (no real Docker daemon).

@@ -5,6 +5,7 @@ This note complements **Constitution VIII** (tests) and **XIV** (layer gates). I
 ## Every milestone (always)
 
 - After each **task group / PR**: `make check` or at least `cargo test` (unit + integration where Docker is available).
+- After changes to **`scripts/dev/lib.sh`** or Docker-related workflows: **`make verify-bootstrap`** (stubbed `docker` / stripped `PATH`; no daemon required).
 - Before calling a milestone **done**: satisfy the **Validation** section in that milestone’s task file (e.g. `specify/tasks/003_milestone_3.md`, `004_milestone_4.md`).
 
 ## M1–M3 (foundation + registry) — already shipped

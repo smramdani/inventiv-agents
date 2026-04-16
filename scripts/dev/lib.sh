@@ -6,7 +6,47 @@ _INVENTIV_DEV_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INVENTIV_ROOT="$(cd "${_INVENTIV_DEV_LIB_DIR}/../.." && pwd)"
 export INVENTIV_ROOT
 
+# Docker Desktop (macOS) installs the CLI under /Applications/.../bin — often missing from
+# non-login shells (Cursor tasks, `make`, CI agents). Prepend known locations before checks.
+inventiv_bootstrap_docker_path() {
+  if command -v docker >/dev/null 2>&1; then
+    return 0
+  fi
+  if [[ -n "${INVENTIV_DOCKER_BIN:-}" && -d "${INVENTIV_DOCKER_BIN}" && -x "${INVENTIV_DOCKER_BIN}/docker" ]]; then
+    export PATH="${INVENTIV_DOCKER_BIN}:$PATH"
+    return 0
+  fi
+  local uname_s
+  uname_s="$(uname -s 2>/dev/null || true)"
+  case "$uname_s" in
+    Darwin)
+      local bins=(
+        "/Applications/Docker.app/Contents/Resources/bin"
+        "/usr/local/bin"
+        "/opt/homebrew/bin"
+      )
+      for d in "${bins[@]}"; do
+        if [[ -x "$d/docker" ]]; then
+          export PATH="$d:$PATH"
+          return 0
+        fi
+      done
+      ;;
+    Linux)
+      for d in /usr/local/bin /usr/bin; do
+        if [[ -x "$d/docker" ]]; then
+          export PATH="$d:$PATH"
+          return 0
+        fi
+      done
+      ;;
+  esac
+  return 1
+}
+
 export DC="${DOCKER_COMPOSE:-docker compose}"
+
+inventiv_bootstrap_docker_path || true
 
 # TCP check to Postgres (uses POSTGRES_HOST / POSTGRES_PORT after caller loads .env).
 inventiv_postgres_tcp_ok() {
@@ -47,13 +87,21 @@ inventiv_load_env() {
   # shellcheck disable=SC1091
   source "$INVENTIV_ROOT/.env"
   set +a
+  export DC="${DOCKER_COMPOSE:-docker compose}"
 }
 
 inventiv_require_docker() {
+  inventiv_bootstrap_docker_path || true
   if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker is not on PATH — this command needs the Docker CLI + Compose v2." >&2
-    echo "  macOS: install Docker Desktop (https://www.docker.com/products/docker-desktop/), open it once, then:  docker version" >&2
-    echo "  For \`make ready\` / \`make run\` / \`make test\` without Docker: start Postgres locally, set POSTGRES_* + DATABASE_URL in .env, install \`psql\` (e.g. brew install libpq)." >&2
+    echo "Docker CLI not found after PATH bootstrap — this command needs Docker + Compose v2." >&2
+    echo "  macOS: open Docker Desktop (whale icon), wait until it says \"running\", then retry in a new terminal:  docker version" >&2
+    if [[ "$(uname -s 2>/dev/null)" == "Darwin" ]]; then
+      if [[ -d "/Applications/Docker.app" ]]; then
+        echo "  Docker.app is present; try adding to PATH: export PATH=\"/Applications/Docker.app/Contents/Resources/bin:\$PATH\"" >&2
+        echo "  Or set INVENTIV_DOCKER_BIN=/Applications/Docker.app/Contents/Resources/bin for this repo's scripts." >&2
+      fi
+    fi
+    echo "  Without Docker: start Postgres + \`psql\`, set POSTGRES_* + DATABASE_URL in .env (see README)." >&2
     exit 1
   fi
   if ! $DC version >/dev/null 2>&1; then
@@ -64,6 +112,7 @@ inventiv_require_docker() {
 
 # True (exit 0) when docker and compose look usable — does not start containers.
 inventiv_has_docker() {
+  inventiv_bootstrap_docker_path || true
   command -v docker >/dev/null 2>&1 && $DC version >/dev/null 2>&1
 }
 

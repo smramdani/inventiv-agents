@@ -13,14 +13,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
-DC="${DOCKER_COMPOSE:-docker compose}"
-
-if [[ -f .env ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
-fi
+# Bootstrap Docker CLI path (macOS Docker.app) then load .env (DOCKER_COMPOSE, POSTGRES_*).
+# shellcheck disable=SC1091
+source "$ROOT/scripts/dev/lib.sh"
+inventiv_load_env
 
 docker_db_ready() {
   command -v docker >/dev/null 2>&1 \

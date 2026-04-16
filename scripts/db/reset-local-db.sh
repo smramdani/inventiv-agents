@@ -8,9 +8,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
-DC="${DOCKER_COMPOSE:-docker compose}"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/dev/lib.sh"
+inventiv_load_env
 
-if ! command -v docker >/dev/null 2>&1 || ! $DC version >/dev/null 2>&1; then
+if ! inventiv_has_docker; then
   echo "reset-local-db requires Docker and Compose to remove named volumes and recreate the db service." >&2
   echo "Without Docker: drop and recreate your database manually, then run ./scripts/db/apply-migrations.sh" >&2
   exit 1

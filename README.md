@@ -95,6 +95,10 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    ```
    Uses `DOCKER_COMPOSE` if set (default `docker compose`).
 
+#### Docker CLI not found (macOS, Cursor, or `make`)
+
+Docker Desktop installs `docker` under **`/Applications/Docker.app/Contents/Resources/bin`**, which is often **not** on `PATH` for GUI-launched terminals, **Cursor** tasks, or **`make`**. This repo’s scripts (`scripts/dev/lib.sh`) **prepend** that path (and `/usr/local/bin`, `/opt/homebrew/bin`) before any `docker` / `docker compose` call. If commands still fail: start **Docker Desktop** until it reports *running*, open a **new** terminal, run **`make doctor`**. Override manually with **`INVENTIV_DOCKER_BIN`** in `.env` (directory containing the `docker` executable).
+
 #### Repeatable dev commands (`dev.sh` + `Makefile`)
 
 Run **`make help`** for a full lifecycle guide, simple verbs (`build`, `release`, `start`, `stop`, `delete`, …), low-level targets, and deploy stub notes. For **when to run manual or full-stack tests** during milestones (especially M4), see `specify/testing-checkpoints.md`.

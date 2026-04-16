@@ -52,6 +52,9 @@ cmd_doctor() {
   echo "  Repository: $INVENTIV_ROOT"
   local ok=0
 
+  # Same PATH fix as lib.sh (doctor may be the first command in a bare shell).
+  inventiv_bootstrap_docker_path || true
+
   if command -v docker >/dev/null 2>&1; then
     echo "  Docker: OK ($(docker --version))"
     if $DC version >/dev/null 2>&1; then

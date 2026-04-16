@@ -56,7 +56,7 @@ clean:
 # ---------------------------------------------------------------------------
 # dev.sh passthrough (precise names)
 # ---------------------------------------------------------------------------
-.PHONY: doctor env up down migrate reset ready test-lib run run-rel check check-local full m4a-smoke cargo
+.PHONY: doctor env up down migrate reset ready test-lib run run-rel check check-local full m4a-smoke verify-bootstrap cargo
 
 doctor:
 	@$(DEV) doctor
@@ -100,6 +100,10 @@ full:
 
 m4a-smoke:
 	@$(DEV) m4a-smoke
+
+# Non-regression: stripped PATH + stub docker proves INVENTIV_DOCKER_BIN bootstrap (no real daemon).
+verify-bootstrap:
+	@bash scripts/dev/verify-docker-bootstrap.sh
 
 cargo:
 	@test -n "$(ARGS)" || (echo 'Set ARGS, e.g. make cargo ARGS="test --test agents_api"' >&2; exit 1)

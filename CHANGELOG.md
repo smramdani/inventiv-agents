@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Local dev without Docker**: `make ready`, `make test`, `make run`, `make check`, and `make full` use **`inventiv_ensure_local_database`** — start Compose when Docker works, otherwise require an open Postgres port (`POSTGRES_HOST` / `POSTGRES_PORT`). **`./scripts/db/apply-migrations.sh`** falls back to host **`psql`** using `MIGRATE_DATABASE_URL` or `POSTGRES_*`. **`make doctor`** passes when either Compose or host Postgres + `psql` works; **`make down`** no-ops if Docker is missing. **`reset-local-db`** still requires Docker (volume wipe).
 
 ### Added
+- **`make verify-bootstrap`**: `scripts/dev/verify-docker-bootstrap.sh` exercises `INVENTIV_DOCKER_BIN` + `inventiv_has_docker` with a stripped `PATH` (no real Docker daemon).
 - **M4a MVP smoke**: `scripts/dev/m4a-mvp-smoke.sh` and `make m4a-smoke` / `./scripts/dev/dev.sh m4a-smoke` — headless register → login → provider+key → agent → SSE validation (requires running API and `M4A_LLM_API_KEY`). Documented in README, `specify/mvp-engine-validation.md`, and `specify/testing-checkpoints.md`.
 
 ## [0.1.1] - 2026-04-13

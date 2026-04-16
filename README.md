@@ -97,7 +97,7 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 
 #### Docker CLI not found (macOS, Cursor, or `make`)
 
-Docker Desktop installs `docker` under **`/Applications/Docker.app/Contents/Resources/bin`**, which is often **not** on `PATH` for GUI-launched terminals, **Cursor** tasks, or **`make`**. This repo’s scripts (`scripts/dev/lib.sh`) **prepend** that path (and `/usr/local/bin`, `/opt/homebrew/bin`) before any `docker` / `docker compose` call. If commands still fail: start **Docker Desktop** until it reports *running*, open a **new** terminal, run **`make doctor`**. Override manually with **`INVENTIV_DOCKER_BIN`** in `.env` (directory containing the `docker` executable).
+Docker Desktop installs `docker` under **`/Applications/Docker.app/Contents/Resources/bin`**, which is often **not** on `PATH` for GUI-launched terminals, **Cursor** tasks, or **`make`**. This repo’s scripts (`scripts/dev/lib.sh`) **prepend** that path (and `/usr/local/bin`, `/opt/homebrew/bin`) before any `docker` / `docker compose` call. If commands still fail: start **Docker Desktop** until it reports *running*, open a **new** terminal, run **`make doctor`**. Override manually with **`INVENTIV_DOCKER_BIN`** in `.env` (directory containing the `docker` executable). CI and regressions: **`make verify-bootstrap`** runs a stubbed CLI test with a stripped `PATH` (no daemon required).
 
 #### Repeatable dev commands (`dev.sh` + `Makefile`)
 

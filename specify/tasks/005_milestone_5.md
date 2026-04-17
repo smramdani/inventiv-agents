@@ -2,7 +2,7 @@
 
 **Status**: **Current** roadmap priority (see `specify/plan.md` §2). **Prerequisites**: M4a engine (SSE + LLM) validated; M3 registry APIs available.
 
-**Deferred until after M5**: **M4b** Phases 4–6 integration in the product sense — MCP/tool **reasoning loop**, run/metrics **persistence**, and **US.2** (MCP in the loop) / full **US.3** agent+tool UX — see `specify/tasks/004_milestone_4.md` Phases 4–6. The HTTP MCP client in `src/infrastructure/mcp/` remains a **library foundation**; wiring into live agent flows waits until **post-M5** per roadmap.
+**Deferred until after M5**: **M4b** Phases 4–6 integration in the product sense — MCP/tool **reasoning loop**, run/metrics **persistence**, and **US.2** (MCP in the loop) / full **US.3** agent+tool UX — see `specify/tasks/004_milestone_4.md` Phases 4–6. The HTTP MCP client in `backend/src/infrastructure/mcp/` remains a **library foundation**; wiring into live agent flows waits until **post-M5** per roadmap.
 
 ## Purpose
 
@@ -22,11 +22,11 @@ Deliver the first **authenticated web client** (or SPA) so organizations can use
 
 ### Database `[DB]`
 
-- Session and sharing tables when introduced: **RLS** + **FORCE RLS**; migrations ordered and documented.
+- Session and sharing tables when introduced: **RLS** + **FORCE RLS**; SQL migrations live under **`backend/migrations/`** (ordered, documented).
 
 ## Tasks (outline — expand in follow-up PRs)
 
-- [ ] **T5.1** `[FE]` Repo layout: e.g. `frontend/` (Vite/React or similar) or separate repo linked from README; AGPL-3.0 compliance for bundled assets.
+- [x] **T5.1** `[FE]` Repo layout: **`backend/`** (Rust API) + **`frontend/`** (cockpit) at repo root; shared tooling at root (`Makefile`, `scripts/`, `specify/`). Next: scaffold app inside `frontend/` (Vite/React or similar); AGPL-3.0 compliance for bundled assets.
 - [ ] **T5.2** `[FE]` Auth: login / register flows against existing `/org/register`, `/auth/login`, JWT storage (secure), `/auth/whoami`.
 - [ ] **T5.3** `[FE]` Admin paths: list/create LLM providers, skills, agents (M3 APIs); role-gated UI.
 - [ ] **T5.4** `[FE]` User path: start a **session** (or equivalent) calling **`POST /org/agents/:id/complete/stream`** with SSE consumer (EventSource / fetch stream).

@@ -11,7 +11,7 @@ The Rust backend act as an orchestration kernel. It manages the multi-tenant lif
 | **M3 (Done)** | **Registry & Entities** | DB schema, domain, `AgentsRepository`, Admin/Owner management API, RLS tests (`specify/tasks/003_milestone_3.md`). |
 | **M4a (done — automated gate)** | **LLM + SSE, no tools / no MCP** | OpenAI-compatible client, org-scoped provider resolution, **`POST /org/agents/:id/complete/stream`** (SSE), TraceID; validate with **`specify/mvp-engine-validation.md`**. Phases **1–3** in `004_milestone_4.md`. |
 | **M5 (current)** | **The Sovereign Cockpit (front-first)** | Authenticated **web client**: auth, registry screens (providers / skills / agents via M3 APIs), **sessions** + SSE chat against M4a, first **usage/cost** UX; session RLS/sharing as designed. **Tasks:** `specify/tasks/005_milestone_5.md`. |
-| **M4b (after M5)** | **Tools + MCP loop + persisted metrics** | **US.2** (MCP in reasoning), **US.3**-style toolbelt in loop, **Phases 5–6** (runs/metrics RLS, orchestration). HTTP MCP client in `src/infrastructure/mcp/` is **foundation only** until this milestone. **`specify/tasks/004_milestone_4.md`** Phases 4–6. |
+| **M4b (after M5)** | **Tools + MCP loop + persisted metrics** | **US.2** (MCP in reasoning), **US.3**-style toolbelt in loop, **Phases 5–6** (runs/metrics RLS, orchestration). HTTP MCP client in `backend/src/infrastructure/mcp/` is **foundation only** until this milestone. **`specify/tasks/004_milestone_4.md`** Phases 4–6. |
 
 ## 3. Component Design
 
@@ -19,7 +19,7 @@ The Rust backend act as an orchestration kernel. It manages the multi-tenant lif
 - OpenAI-compatible APIs; SSE streaming for the cockpit and API clients.
 
 ### MCP & tool loop (M4b — **after M5**)
-- Library: `McpHttpJsonRpcClient` (`tools/list`, `tools/call`) exists; **product integration** (reasoning loop, live SSE + tools) waits until **post-M5** per roadmap.
+- Library: `McpHttpJsonRpcClient` in `backend/src/infrastructure/mcp/` (`tools/list`, `tools/call`) exists; **product integration** (reasoning loop, live SSE + tools) waits until **post-M5** per roadmap.
 - Full loop + persisted metrics: **`004_milestone_4.md`** Phases 5–6.
 
 ### Reasoning Loop Logic

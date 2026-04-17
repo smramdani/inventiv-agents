@@ -9,4 +9,10 @@ cd "$ROOT"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/dev/lib.sh"
 inventiv_load_env
+# Cargo project lives under backend/; keep repo root as cwd for .env and Compose.
+if [[ "${1:-}" == "cargo" ]]; then
+  shift
+  cd "${INVENTIV_BACKEND}" || exit 1
+  exec cargo "$@"
+fi
 exec "$@"

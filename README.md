@@ -23,6 +23,16 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 - **Observability**: Systematic logging, metrics, and telemetry for full execution traceability.
 - **Marketplace Ready**: Foundation for cross-organization model and skill sharing.
 
+## Repository layout (monorepo)
+
+| Path | Role |
+|------|------|
+| **`backend/`** | API Rust (`Cargo.toml`, `src/`, `tests/`, `migrations/`). |
+| **`frontend/`** | Application web cockpit (M5) — squelette documenté dans `frontend/README.md`. |
+| **Racine** | Spec Kit (`specify/`, `.specify/`), Docker Compose, `Makefile`, `scripts/`, `README`, `CHANGELOG`. |
+
+Les commandes **`make`** / **`./scripts/dev/dev.sh`** exécutent **cargo** dans `backend/` automatiquement. **`./scripts/dev/with-env.sh cargo …`** en fait autant lorsque la première commande est `cargo`.
+
 ## 🛠 Tech Stack
 
 - **Backend**: Rust (Axum, Tokio, SQLx)
@@ -62,7 +72,7 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 
    **Without Docker:** run PostgreSQL locally (same port as `POSTGRES_PORT` in `.env`, typically `5432`), ensure extensions **uuid-ossp** and **vector** are available, and align `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` with your instance. Install the client **`psql`**. Then **`make ready`** probes the TCP port and applies migrations via `psql` (or set **`MIGRATE_DATABASE_URL`** to a superuser URL). The API does not require Redis yet; Compose still starts Redis for future use.
 
-4. **Apply database migrations** (ordered `migrations/*.sql`; **Docker** exec or **host `psql`** — see `./scripts/db/apply-migrations.sh`):
+4. **Apply database migrations** (ordered `backend/migrations/*.sql`; **Docker** exec or **host `psql`** — see `./scripts/db/apply-migrations.sh`):
    ```bash
    ./scripts/db/apply-migrations.sh
    ```
@@ -72,22 +82,22 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
    ```
    Equivalent manual one-liner per file:
    ```bash
-   docker compose exec -T db psql -U inventiv_user -d inventiv_agents -v ON_ERROR_STOP=1 < migrations/001_initial_schema_with_rls.sql
+   docker compose exec -T db psql -U inventiv_user -d inventiv_agents -v ON_ERROR_STOP=1 < backend/migrations/001_initial_schema_with_rls.sql
    # … repeat for 002, 003, 004, 005
    ```
 
 5. **Run the API** (loads `.env` via `dotenv` in `main`):
    ```bash
-   set -a && source .env && set +a   # or: export $(grep -v '^#' .env | xargs)
-   cargo run
+   ./scripts/dev/dev.sh run
    ```
+   Équivalent manuel depuis la racine : `set -a && source .env && set +a && cd backend && cargo run`.
 
 6. **Run tests** (integration tests use `DATABASE_URL` from `.env`, defaulting to `127.0.0.1:5432` and the `inventiv_app` role).  
    DB integration tests use a **shared named lock** (`serial_test`) so `cargo test` stays safe against one Docker Postgres:
    ```bash
-   set -a && source .env && set +a
-   cargo test
+   ./scripts/dev/dev.sh test
    ```
+   Ou : `set -a && source .env && set +a && ./scripts/dev/with-env.sh cargo test`.
 
 7. **One-shot local check** (starts Compose, migrates, runs `cargo test` + release build):
    ```bash
@@ -114,7 +124,7 @@ Use one entry point so every machine runs the same sequence (Docker up, optional
 | `make delete` | Same as `make reset` — **destroys** local DB volume, then migrates. |
 | `make test-unit` | Same as `make test-lib` — unit tests only, no Docker. |
 | `make fmt` / `make lint` | Format / Clippy only. |
-| `make clean` | `cargo clean`. |
+| `make clean` | `cargo clean` dans `backend/`. |
 | `make deploy-staging` / `make deploy-prod` | Stubs (`REF=…`, default `latest`); wire to your CI/CD. |
 
 | Goal | Script | Make (equivalent) |
@@ -147,7 +157,7 @@ Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targe
 
 **MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). **`make check`** runs the full test suite when Docker **or** host Postgres (TCP) is available; if neither is reachable, it falls back to **library unit tests only** (same scope as `make check-local`). Use **`make check-local`** to force that path without probing Docker/Postgres.
 
-**M4b — MCP (Phase 4, in progress)** — HTTP JSON-RPC client: `inventivagents::infrastructure::mcp::McpHttpJsonRpcClient` implements `McpInvocationPort` (`tools/list`, `tools/call`) against an MCP skill **`endpoint_url`**. Domain helpers: `validate_mcp_invoke_request`, `select_unique_tool_name`. Not yet wired to the public HTTP agent stream (Phase 6). Spec: `specify/tasks/004_milestone_4.md`.
+**M4b — MCP (Phase 4, in progress)** — HTTP JSON-RPC client: `inventivagents::infrastructure::mcp::McpHttpJsonRpcClient` implements `McpInvocationPort` (`tools/list`, `tools/call`) against an MCP skill **`endpoint_url`**. Domain helpers: `validate_mcp_invoke_request`, `select_unique_tool_name`. Not yet wired to the public HTTP agent stream (Phase 6). Spec: `specify/tasks/004_milestone_4.md`. Code: `backend/src/infrastructure/mcp/`.
 
 ### Docker troubleshooting (local)
 
@@ -160,7 +170,7 @@ Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targe
 ### Staging / production (e.g. Scaleway)
 
 - Use **Scaleway Managed PostgreSQL** (or Serverless SQL) with TLS (`sslmode=require` in `DATABASE_URL`), private network attachment where possible, and secrets in **Scaleway Secret Manager** (or equivalent), not in the image.
-- Run the **same migration sequence** as local using a DB role that can `CREATE EXTENSION`, `CREATE ROLE`, and apply RLS policies (see `migrations/001_initial_schema_with_rls.sql`).
+- Run the **same migration sequence** as local using a DB role that can `CREATE EXTENSION`, `CREATE ROLE`, and apply RLS policies (see `backend/migrations/001_initial_schema_with_rls.sql`).
 - Point `DATABASE_URL` at the **`inventiv_app`**-style application user created by your migration pipeline; keep a separate superuser only for operations.
 - For containers on Scaleway **Kubernetes** or **Serverless Containers**, inject `DATABASE_URL` and `JWT_SECRET` from the secret store; do not bake credentials into the image.
 
@@ -200,7 +210,7 @@ curl -N -X POST "http://localhost:8080/org/agents/<AGENT_UUID>/complete/stream" 
   -d '{"message":"Hello","model":"gpt-4o-mini","max_tokens":256}'
 ```
 
-SSE events (in order on success): `meta` → `delta` → `usage` → `done`. See doc comments on `post_agent_complete_stream` in `src/api/handlers/engine.rs` for the exact JSON shape per event.
+SSE events (in order on success): `meta` → `delta` → `usage` → `done`. See doc comments on `post_agent_complete_stream` in `backend/src/api/handlers/engine.rs` for the exact JSON shape per event.
 
 ### M4a MVP smoke (Spec Kit gate)
 
@@ -222,4 +232,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5** (cockpit / front-end — **current**). **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `src/infrastructure/mcp/` is library-only until then. Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.
+**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5** (cockpit / front-end — **current**). **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `backend/src/infrastructure/mcp/` is library-only until then. Layout: `backend/` (API), `frontend/` (UI). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.

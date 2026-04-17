@@ -41,7 +41,7 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 **Purpose**: Stable boundaries before HTTP and DB details.
 
-- [x] **T4.1** `[Domain]` Define the **reasoning loop** model (states: reason → tool selection → execute → validate → respond, or equivalent) as pure domain types with errors in `src/domain/` (new module e.g. `engine` or `reasoning`), with `mod tests` for invalid transitions.
+- [x] **T4.1** `[Domain]` Define the **reasoning loop** model (states: reason → tool selection → execute → validate → respond, or equivalent) as pure domain types with errors in `backend/src/domain/` (new module e.g. `engine` or `reasoning`), with `mod tests` for invalid transitions.
 - [x] **T4.2** `[Domain]` Define an **`LlmCompletionPort`** (trait): non-streaming and/or streaming chunk type, request context (model id, messages, max tokens), and structured errors—no `reqwest` in domain.
 - [x] **T4.3** `[Domain]` Define an **`McpInvocationPort`** (trait): discover tools (if required by plan), invoke tool by name with JSON args, map timeouts and transport errors to domain errors—no raw JSON-RPC wire types leaked into handlers.
 
@@ -53,7 +53,7 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 **Purpose**: Sovereign provider calls using org-stored provider URL + secret (M3).
 
-- [x] **T4.4** `[Infra]` Implement **`OpenAiCompatibleClient`** (or similarly named) in `src/infrastructure/llm/` using `reqwest` + streaming response handling; map HTTP and parse errors to domain errors.
+- [x] **T4.4** `[Infra]` Implement **`OpenAiCompatibleClient`** (or similarly named) in `backend/src/infrastructure/llm/` using `reqwest` + streaming response handling; map HTTP and parse errors to domain errors.
 - [x] **T4.5** `[Infra]` Wire **provider resolution** from `AgentsRepository` / provider id on the agent row; never log API keys (IX).
 - [x] **T4.6** `[Domain]` **[US.1]** Token accounting model: capture input/output token counts (and optional cost fields) for each completion step for later persistence.
 
@@ -75,15 +75,15 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ## Phase 4 — MCP client (minimal vertical slice) — **M4b (after M5)**
 
-**Status**: HTTP JSON-RPC client **implemented** as a **library** (`src/infrastructure/mcp/`). **Product wiring** (SSE + tools, orchestration) is **deferred until after M5** per `specify/plan.md`.
+**Status**: HTTP JSON-RPC client **implemented** as a **library** (`backend/src/infrastructure/mcp/`). **Product wiring** (SSE + tools, orchestration) is **deferred until after M5** per `specify/plan.md`.
 
 **Purpose**: JSON-RPC over HTTP(S) toward MCP servers registered as skills (M3).
 
-- [x] **T4.10** `[Infra]` Implement MCP **tool list / invoke** client in `src/infrastructure/mcp/` with strict timeouts and size limits; configuration from `Skill` rows (endpoint, metadata) via `McpHttpJsonRpcClient::new(skill_endpoint_url)`.
+- [x] **T4.10** `[Infra]` Implement MCP **tool list / invoke** client in `backend/src/infrastructure/mcp/` with strict timeouts and size limits; configuration from `Skill` rows (endpoint, metadata) via `McpHttpJsonRpcClient::new(skill_endpoint_url)`.
 - [x] **T4.11** `[Domain]` **[US.2]** Minimal mapping: `select_unique_tool_name` when the server exposes exactly one tool (orchestrator disambiguation later).
 - [x] **T4.12** `[Domain]` `validate_mcp_invoke_request` + `mod tests` for empty tool name and singleton selection.
 
-**Checkpoint**: Contract tests with **wiremock** stub JSON-RPC (`tools/list`, `tools/call`) in `src/infrastructure/mcp/http_client.rs`.
+**Checkpoint**: Contract tests with **wiremock** stub JSON-RPC (`tools/list`, `tools/call`) in `backend/src/infrastructure/mcp/http_client.rs`.
 
 ---
 

@@ -23,10 +23,10 @@ inventiv_migrate_try
 
 echo "==> Running Rust unit + integration tests"
 export DATABASE_URL JWT_SECRET
-cargo test
+inventiv_cargo test
 
 echo "==> Building release binary (sanity)"
-cargo build --release
+inventiv_cargo build --release
 
 echo ""
 echo "==> Optional: start API in another terminal:"

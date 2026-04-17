@@ -257,9 +257,9 @@ get_project_structure() {
     local project_type="$1"
     
     if [[ "$project_type" == *"web"* ]]; then
-        echo "backend/\\nfrontend/\\ntests/"
+        echo "backend/\\nfrontend/\\nspecify/"
     else
-        echo "src/\\ntests/"
+        echo "backend/\\nfrontend/\\nspecify/"
     fi
 }
 
@@ -271,7 +271,7 @@ get_commands_for_language() {
             echo "cd src && pytest && ruff check ."
             ;;
         *"Rust"*)
-            echo "cargo test && cargo clippy"
+            echo "cd backend && cargo test && cargo clippy"
             ;;
         *"JavaScript"*|*"TypeScript"*)
             echo "npm test && npm run lint"

@@ -33,7 +33,7 @@ Simple verbs (easy to remember)
   make verify-bootstrap  Self-test Docker PATH bootstrap (stub CLI; no Docker daemon).
   make fmt             Format Rust sources (cargo fmt).
   make lint            Clippy only (cargo clippy --all-targets -D warnings).
-  make clean           cargo clean
+  make clean           cargo clean (backend/ crate)
 
 Precise / low-level (same names as dev.sh)
 ------------------------------------------

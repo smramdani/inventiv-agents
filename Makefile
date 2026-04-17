@@ -51,7 +51,7 @@ lint:
 	@$(WITH) cargo clippy --all-targets -- -D warnings
 
 clean:
-	cargo clean
+	cd backend && cargo clean
 
 # ---------------------------------------------------------------------------
 # dev.sh passthrough (precise names)

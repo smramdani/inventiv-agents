@@ -1,2 +1,7 @@
 /target
+/backend/target
+/frontend/node_modules
+/frontend/dist
+/frontend/build
+/frontend/.next
 .env

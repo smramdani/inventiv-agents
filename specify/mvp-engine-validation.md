@@ -29,7 +29,7 @@ make check
 
 For the **full** gate (including `tests/*.rs`), run **`make check`** on a machine where `docker compose version` succeeds (e.g. CI or Docker Desktop running).
 
-- [ ] All unit tests pass (`src/**` `mod tests`, engine ports, LLM client wiremock).
+- [ ] All unit tests pass (`backend/src/**` `mod tests`, engine ports, LLM client wiremock).
 - [ ] All integration tests pass (`tests/*.rs`), including:
   - [ ] `agents_api`, `agents_registry_rls`, `identity_rls`, `identity_http`
   - [ ] `llm_resolve_integration` (DB → resolver → mock LLM)

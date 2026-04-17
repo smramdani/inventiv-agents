@@ -1,9 +1,11 @@
 # Keep API images small when you add a Dockerfile later.
 /target
+/backend/target
 .git
 .env
 *.md
 .specify
 specify
-tests
+backend/tests
 .github
+frontend/node_modules

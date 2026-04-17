@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Repository layout**: Rust API crate, SQL migrations, and integration tests moved under **`backend/`**; **`frontend/`** added for the M5 cockpit (README placeholder). Root keeps Spec Kit, Compose, `Makefile`, and `scripts/`. Dev scripts run **cargo** from `backend/` (`inventiv_cargo`, `with-env.sh cargo …`); migrations applied from **`backend/migrations/*.sql`**. Docs and `.gitignore` / `.dockerignore` updated.
 - **Roadmap (Spec Kit)**: **M5** (Sovereign Cockpit / front-end) is the **current** delivery priority; **M4b** Phases **4–6** (MCP in the live reasoning loop, persisted runs/metrics, full orchestration) are **scheduled after M5**. Aligned docs: `specify/plan.md`, `specify/spec.md` §7, `specify/tasks/004_milestone_4.md`, `specify/tasks/005_milestone_5.md`, `specify/mvp-engine-validation.md`, `specify/testing-checkpoints.md`, `README.md`.
 
 ### Added

@@ -150,47 +150,47 @@ main() {
       inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
-      cargo test "$@"
+      inventiv_cargo test "$@"
       ;;
     test-lib)
       inventiv_load_env
-      cargo test --lib "$@"
+      inventiv_cargo test --lib "$@"
       ;;
     run)
       inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
-      cargo run "$@"
+      inventiv_cargo run "$@"
       ;;
     run-rel)
       inventiv_ensure_local_database
       inventiv_migrate_try
       inventiv_load_env
-      cargo run --release "$@"
+      inventiv_cargo run --release "$@"
       ;;
     check)
       inventiv_load_env
-      cargo fmt --all -- --check
-      cargo clippy --all-targets -- -D warnings
+      inventiv_cargo fmt --all -- --check
+      inventiv_cargo clippy --all-targets -- -D warnings
       if inventiv_has_docker; then
         inventiv_docker_up
         inventiv_migrate_try
-        cargo test "$@"
+        inventiv_cargo test "$@"
       elif inventiv_postgres_tcp_ok; then
         echo "==> Docker not used; host Postgres reachable — running migrations + full integration tests." >&2
         inventiv_migrate_try
-        cargo test "$@"
+        inventiv_cargo test "$@"
       else
         echo "==> Docker/Compose not available and Postgres TCP (${POSTGRES_HOST:-127.0.0.1}:${POSTGRES_PORT:-5432}) not reachable; running cargo test --lib only." >&2
         echo "==> Start Docker Desktop, or start local Postgres + psql (see README / .env.example), then re-run for full checks." >&2
-        cargo test --lib "$@"
+        inventiv_cargo test --lib "$@"
       fi
       ;;
     check-local)
       inventiv_load_env
-      cargo fmt --all -- --check
-      cargo clippy --all-targets -- -D warnings
-      cargo test --lib "$@"
+      inventiv_cargo fmt --all -- --check
+      inventiv_cargo clippy --all-targets -- -D warnings
+      inventiv_cargo test --lib "$@"
       ;;
     full)
       bash "$INVENTIV_ROOT/scripts/dev/test-local-full.sh"

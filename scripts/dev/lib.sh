@@ -5,6 +5,18 @@
 _INVENTIV_DEV_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INVENTIV_ROOT="$(cd "${_INVENTIV_DEV_LIB_DIR}/../.." && pwd)"
 export INVENTIV_ROOT
+# Rust API crate (Cargo.toml, src/, tests/, migrations/).
+INVENTIV_BACKEND="${INVENTIV_ROOT}/backend"
+export INVENTIV_BACKEND
+
+# Run cargo in the backend crate directory (monorepo layout).
+inventiv_cargo() {
+  if [[ ! -f "${INVENTIV_BACKEND}/Cargo.toml" ]]; then
+    echo "Expected Rust crate at ${INVENTIV_BACKEND}/Cargo.toml" >&2
+    exit 1
+  fi
+  ( cd "${INVENTIV_BACKEND}" && cargo "$@" )
+}
 
 # Docker Desktop (macOS) installs the CLI under /Applications/.../bin — often missing from
 # non-login shells (Cursor tasks, `make`, CI agents). Prepend known locations before checks.

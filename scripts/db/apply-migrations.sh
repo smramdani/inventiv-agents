@@ -78,9 +78,9 @@ apply_one_psql() {
 }
 
 shopt -s nullglob
-files=(migrations/*.sql)
+files=(backend/migrations/*.sql)
 if [[ ${#files[@]} -eq 0 ]]; then
-  echo "No migrations/*.sql files found." >&2
+  echo "No backend/migrations/*.sql files found." >&2
   exit 1
 fi
 

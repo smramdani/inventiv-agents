@@ -16,7 +16,7 @@ This note complements **Constitution VIII** (tests) and **XIV** (layer gates). I
 | After auth / org APIs | `curl` flows from `README.md` (register, login). |
 | After registry (M3) | Integration tests + optional `curl` to `/org/providers`, `/org/agents` with a JWT. |
 
-## M4a — MVP engine (**no tools, no MCP**) — **current priority**
+## M4a — MVP engine (**no tools, no MCP**)
 
 Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-off.
 
@@ -25,20 +25,24 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 | Automated (full) | `make check` with Docker running — includes `tests/*.rs` (LLM resolver, SSE, HTTP, RLS). |
 | Automated (no Docker) | `make check` still runs `fmt` + `clippy`, then falls back to `cargo test --lib`. Use `make check-local` to skip the Docker probe entirely. |
 | Manual (recommended once per env) | `make m4a-smoke` with **`M4A_LLM_API_KEY`** (see `scripts/dev/m4a-mvp-smoke.sh`), or `curl -N` on `POST /org/agents/<id>/complete/stream` (README). |
-| Gate | **Do not** start MCP client / tool orchestration work until MVP checklist is signed off (roadmap **M4b**). |
+| Gate | **M4b** (MCP in product path + orchestration) starts **after M5**; keep M4a checklist green before shipping cockpit features that depend on the same API. |
 
-## M4b — MCP, persistence, full loop (**in progress**)
+## M5 (cockpit) — **current priority**
+
+Tasks: **`specify/tasks/005_milestone_5.md`**.
+
+- After first **authenticated UI** path: smoke in browser (login, empty states).
+- After **registry screens** (providers, skills, agents): CRUD against existing APIs with JWT.
+- After **SSE session UX**: stream against `POST /org/agents/<id>/complete/stream`; trace id visible where applicable.
+- After **session sharing**: two browsers / two users, RLS checks.
+- Before release: **accessibility**, **audit log** export, and **cost dashboard** spot-check against known test data.
+
+## M4b — MCP, persistence, full loop (**after M5**)
 
 1. **After Phase 4 (MCP HTTP client)** — **`cargo test`** covers wiremock JSON-RPC stubs; **Manual**: point `McpHttpJsonRpcClient` at a real MCP HTTP endpoint (skill row); timeout and error paths.
 2. **After Phase 5–6 (persistence + orchestration)** — **Manual + DB**: execution/metrics tables and RLS across orgs.
 
-**Rule of thumb**: use **wiremock / CI** for LLM until you need a real provider; add **real MCP** only when implementing M4b.
-
-## M5 (cockpit) — recommended manual gates
-
-- After first **authenticated UI** path: smoke in browser (login, empty states).
-- After **session sharing**: two browsers / two users, RLS checks.
-- Before release: **accessibility**, **audit log** export, and **cost dashboard** spot-check against known test data.
+**Rule of thumb**: use **wiremock / CI** for LLM until you need a real provider; add **real MCP** in the live agent path when resuming **M4b** after M5.
 
 ## Cross-cutting
 

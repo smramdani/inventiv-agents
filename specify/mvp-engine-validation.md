@@ -50,12 +50,12 @@ Use a **test** API key and model on your provider (never commit secrets).
 
 ## Explicitly **out of scope** for this MVP gate
 
-- MCP tool list / invoke (`T4.10`–`T4.12`) — **deferred** until after this checklist is signed off.
-- Reasoning-loop orchestration with tool branches (`T4.16`+) — **deferred**.
-- Persistence of runs / metrics tables (`T4.13`–`T4.15`) — **deferred** (token counts already returned in SSE `usage` event).
+- MCP tool list / invoke in the **product** path (`T4.10`–`T4.12`) — **M4b after M5** (see `specify/plan.md`).
+- Reasoning-loop orchestration with tool branches (`T4.16`+) — **M4b after M5**.
+- Persistence of runs / metrics tables (`T4.13`–`T4.15`) — **M4b after M5** (token counts already returned in SSE `usage` event).
 
 ## Sign-off
 
 - **Owner / Tech lead**: name, date — MVP engine (no tools, no MCP) validated: **yes / no**.
 
-When **yes**, proceed to roadmap **M4b** (MCP + tools) or **M5** planning per `specify/plan.md`.
+When **yes**, proceed to **M5** (cockpit / front-end) per **`specify/tasks/005_milestone_5.md`** and `specify/plan.md`. **M4b** (MCP + tools in loop + persistence) follows **after M5**.

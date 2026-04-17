@@ -1,15 +1,17 @@
 # Milestone 4: The Agentic Engine (LLM + SSE first; MCP / tools deferred)
 
-**Prerequisites**: M3 complete (`specify/tasks/003_milestone_3.md`). **Plan**: `specify/plan.md` §2–3 (roadmap **M4a** = MVP without tools/MCP; **M4b** = MCP + persistence + full loop).
+**Prerequisites**: M3 complete (`specify/tasks/003_milestone_3.md`). **Plan**: `specify/plan.md` §2–3.
 
-**MVP focus (now)**: Validate **Phases 1–3** only — see **`specify/mvp-engine-validation.md`**. Do **not** implement Phase 4 (MCP) until that checklist is signed off.
+**Roadmap note (M5-first)**: **M5** (cockpit / front-end) is the **current** delivery priority. **Phases 4–6** of this file (**M4b** — MCP in loop, metrics persistence, orchestration) are **deferred until after M5**. **US.2** and the full **US.3** tool-in-loop experience ship with **M4b**, not before M5. Phase 4 code may exist as a **library**; **product integration** waits until **post-M5**.
+
+**M4a focus**: Validate **Phases 1–3** — see **`specify/mvp-engine-validation.md`**.
 
 ## Layer definition of done (Constitution XIV)
 
 Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ### Vertical slice
-- **Story linkage (M4a MVP)**: **US.4** narrowed to **single-turn, no-tool** use: authenticated user invokes a configured agent (with LLM provider) and receives an **SSE** model response. **US.1–US.3** supply provider + agent registration. **US.2** (MCP skills in the loop) is **out of scope** until M4b.
+- **Story linkage (M4a MVP)**: **US.4** narrowed to **single-turn, no-tool** use: authenticated user invokes a configured agent (with LLM provider) and receives an **SSE** model response. **US.1** (provider registration) is supported by APIs; **US.2** / **US.3** (MCP + toolbelt **in the reasoning loop**) are **M4b after M5** (see `plan.md`). **M5** covers **US.4**/**US.5**-oriented **UX** (cockpit, sessions, first cost views).
 - **Independent value**: A client can call the streaming completion API without M5 UI, without MCP, and without executing skills — demonstrable with `curl` + integration tests.
 - **Artifacts**: `specify/spec.md`, `specify/plan.md`, `specify/mvp-engine-validation.md`, and this file stay aligned (XII); scope changes are updated in spec/plan first.
 
@@ -71,9 +73,9 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 4 — MCP client (minimal vertical slice) — **M4b (in progress)**
+## Phase 4 — MCP client (minimal vertical slice) — **M4b (after M5)**
 
-**Status**: First HTTP JSON-RPC slice shipped; orchestration in Phase 6 still wires this into the live API path.
+**Status**: HTTP JSON-RPC client **implemented** as a **library** (`src/infrastructure/mcp/`). **Product wiring** (SSE + tools, orchestration) is **deferred until after M5** per `specify/plan.md`.
 
 **Purpose**: JSON-RPC over HTTP(S) toward MCP servers registered as skills (M3).
 
@@ -85,9 +87,9 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 5 — Persistence for runs & metrics — **DEFERRED (M4b)**
+## Phase 5 — Persistence for runs & metrics — **DEFERRED (M4b, after M5)**
 
-**Purpose**: Align with spec §3 usage tracking and US.5 groundwork. **Out of MVP** (tokens already exposed in SSE `usage` for M4a).
+**Purpose**: Align with spec §3 usage tracking and US.5 groundwork. **After M5** (tokens already exposed in SSE `usage` for M4a).
 
 - [ ] **T4.13** `[DB]` Add migration(s) for **execution or session run** tables (naming per implementation): `organization_id`, `agent_id`, `user_id`, `trace_id`, status, token fields, timestamps; **RLS** + **FORCE RLS**.
 - [ ] **T4.14** `[Infra]` Repository for persisting runs and per-step metrics; **`set_rls_context`** on all queries.
@@ -97,9 +99,9 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 6 — End-to-end reasoning loop orchestration — **DEFERRED (M4b)**
+## Phase 6 — End-to-end reasoning loop orchestration — **DEFERRED (M4b, after M5)**
 
-**Purpose**: Connect loop + LLM + MCP + persistence in one service path.
+**Purpose**: Connect loop + LLM + MCP + persistence in one service path (post–M5 cockpit).
 
 - [ ] **T4.16** `[Domain]` / `[Infra]` Application service orchestrating the loop for one user message (happy path + tool failure + LLM failure).
 - [ ] **T4.17** `[API]` **[US.4]** Single entry route documented in `README.md` (minimal example for streaming agent chat).
@@ -127,8 +129,9 @@ Use **`specify/mvp-engine-validation.md`** as the authoritative checklist (autom
 
 ## Dependencies (summary)
 
-1. **M4a**: Phases **1 → 2 → 3**; validate with **`mvp-engine-validation.md`** (manual SSE + sign-off still recommended for production readiness).  
-2. **M4b**: Phase **4** (MCP HTTP client) is underway; **5** (persistence) before persistence-heavy assertions in **6** (orchestration).  
+1. **M4a**: Phases **1 → 3**; validate with **`mvp-engine-validation.md`**.  
+2. **M5**: Cockpit / front-end — **`005_milestone_5.md`**.  
+3. **M4b**: Phases **4–6** (MCP product integration, persistence, orchestration) **after M5**.  
 3. Phase 2 before Phase 3 (streaming needs LLM adapter).
 
 ---
@@ -136,5 +139,5 @@ Use **`specify/mvp-engine-validation.md`** as the authoritative checklist (autom
 ## Notes
 
 - If scope is too large for one increment, split behind feature flags **via configuration** (XV), not compile-time `env == "prod"`.
-- Full **session sharing** and cockpit UX remain **M5** per `specify/plan.md`.
+- Full **session sharing** and cockpit UX are **M5 (current)** per `specify/plan.md`; **M4b** follows M5.
 - The domain trait **`McpInvocationPort`** (Phase 1) remains a boundary for M4b; **no MCP adapter** is required for M4a MVP sign-off.

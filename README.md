@@ -222,4 +222,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M4b Phase 4** (HTTP MCP client, wiremock-tested). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/004_milestone_4.md`.
+**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5** (cockpit / front-end — **current**). **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `src/infrastructure/mcp/` is library-only until then. Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.

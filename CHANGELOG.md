@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Roadmap (Spec Kit)**: **M5** (Sovereign Cockpit / front-end) is the **current** delivery priority; **M4b** Phases **4–6** (MCP in the live reasoning loop, persisted runs/metrics, full orchestration) are **scheduled after M5**. Aligned docs: `specify/plan.md`, `specify/spec.md` §7, `specify/tasks/004_milestone_4.md`, `specify/tasks/005_milestone_5.md`, `specify/mvp-engine-validation.md`, `specify/testing-checkpoints.md`, `README.md`.
+
 ### Added
 - **M4b Phase 4 (Spec Kit)**: `src/infrastructure/mcp/` — `McpHttpJsonRpcClient` implements `McpInvocationPort` (JSON-RPC `tools/list` / `tools/call` over HTTP POST, 30s timeout, 2 MiB response cap). Domain: `validate_mcp_invoke_request`, `select_unique_tool_name`. Wiremock contract tests in `http_client.rs`. Docs: `README.md`, `specify/plan.md`, `specify/tasks/004_milestone_4.md`, `mvp-engine-validation.md`, `testing-checkpoints.md`.
 

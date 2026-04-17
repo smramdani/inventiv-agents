@@ -37,13 +37,15 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to deploy safe, 
 - **US.4 (User)**: I want to start a session with the "HR Agent" to ask about my holiday balance.
 - **US.5 (Owner)**: I want to see a report of token usage per department to monitor my AI budget.
 
-## 7. Milestone M4 (technical scope, v1.0.0 path)
+## 7. Milestones M4 / M5 / M4b (technical path, v1.0.0)
 
-**M4a (MVP — current)**: Headless **agentic engine** without tool execution and **without MCP**: OpenAI-compatible **LLM**, org-scoped **provider resolution**, **SSE** completion endpoint, **TraceID** / structured logging. Delivers a minimal **US.4** slice (single-turn completion) for API clients before **M5** cockpit.
+**M4a (shipped)**: Headless **agentic engine** without tool execution in the product path: OpenAI-compatible **LLM**, org-scoped **provider resolution**, **SSE** completion, **TraceID** / structured logging. Minimal **US.4** slice for API clients.
 
-**M4b (next)**: **MCP client**, toolbelt in the **reasoning loop**, and **persistence of runs/metrics** (RLS) — see `specify/plan.md` roadmap row **M4b** and deferred phases in `specify/tasks/004_milestone_4.md`.
+**M5 (current priority)**: **Sovereign Cockpit** — first **web front-end**: authenticated flows, registry UX (providers, skills, agents using existing APIs), **sessions** with SSE against M4a, first **usage / cost** visibility; session sharing as designed. Tasks: **`specify/tasks/005_milestone_5.md`**.
 
-**MVP validation checklist**: `specify/mvp-engine-validation.md`.
+**M4b (after M5)**: **US.2** (MCP skills **in the reasoning loop**), full **US.3**-style toolbelt orchestration, **persistence of runs/metrics** (RLS) — `specify/tasks/004_milestone_4.md` Phases **4–6**. An HTTP MCP **client library** may exist earlier as a non-product-critical foundation; **wiring** into live agent streams is **post-M5**.
+
+**M4a validation checklist**: `specify/mvp-engine-validation.md`.
 
 ## 8. Open Source & License
 - **License**: AGPL-3.0.

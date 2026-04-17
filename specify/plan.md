@@ -9,24 +9,23 @@ The Rust backend act as an orchestration kernel. It manages the multi-tenant lif
 | :--- | :--- | :--- |
 | **M1 & M2 (Done)** | **Base Foundation** | Identity, Auth, RLS, Traceability, Telemetry. |
 | **M3 (Done)** | **Registry & Entities** | DB schema, domain, `AgentsRepository`, Admin/Owner management API, RLS tests (`specify/tasks/003_milestone_3.md`). |
-| **M4a (done — automated gate)** | **LLM + SSE, no tools / no MCP** | OpenAI-compatible client, org-scoped provider resolution, **`POST /org/agents/:id/complete/stream`** (SSE), TraceID; validate with **`specify/mvp-engine-validation.md`** (manual SSE + sign-off still recommended). Phases **1–3** in `004_milestone_4.md`. |
-| **M4b (current)** | **Tools + MCP + persistence** | **Phase 4**: HTTP JSON-RPC MCP client (`src/infrastructure/mcp/`). **Phases 5–6**: run/metrics persistence (RLS), full reasoning orchestration + API — **`specify/tasks/004_milestone_4.md`**. |
-| **M5** | **The Sovereign Cockpit** | Secure Chat Sessions + RLS session sharing + Audit/Cost dashboard. |
+| **M4a (done — automated gate)** | **LLM + SSE, no tools / no MCP** | OpenAI-compatible client, org-scoped provider resolution, **`POST /org/agents/:id/complete/stream`** (SSE), TraceID; validate with **`specify/mvp-engine-validation.md`**. Phases **1–3** in `004_milestone_4.md`. |
+| **M5 (current)** | **The Sovereign Cockpit (front-first)** | Authenticated **web client**: auth, registry screens (providers / skills / agents via M3 APIs), **sessions** + SSE chat against M4a, first **usage/cost** UX; session RLS/sharing as designed. **Tasks:** `specify/tasks/005_milestone_5.md`. |
+| **M4b (after M5)** | **Tools + MCP loop + persisted metrics** | **US.2** (MCP in reasoning), **US.3**-style toolbelt in loop, **Phases 5–6** (runs/metrics RLS, orchestration). HTTP MCP client in `src/infrastructure/mcp/` is **foundation only** until this milestone. **`specify/tasks/004_milestone_4.md`** Phases 4–6. |
 
 ## 3. Component Design
 
-### LLM Abstraction Layer (M4a — in progress / validate)
-- A generic service to talk to OpenAI-compatible APIs (OpenRouter, Azure, OVH).
-- Standardized streaming (SSE) for real-time interaction.
+### LLM Abstraction Layer (M4a — shipped)
+- OpenAI-compatible APIs; SSE streaming for the cockpit and API clients.
 
-### MCP Client Implementation (M4b — Phase 4 in progress)
-- JSON-RPC over HTTP(S) toward MCP servers registered as skills (`McpHttpJsonRpcClient`); stdio transport remains future work.
-- Tool discovery via `tools/list`; orchestration into the live agent stream is **Phase 6**.
+### MCP & tool loop (M4b — **after M5**)
+- Library: `McpHttpJsonRpcClient` (`tools/list`, `tools/call`) exists; **product integration** (reasoning loop, live SSE + tools) waits until **post-M5** per roadmap.
+- Full loop + persisted metrics: **`004_milestone_4.md`** Phases 5–6.
 
-### Reasoning Loop Logic (M4a: domain model only; M4b: full orchestration)
-- **M4a**: Single-turn LLM completion over SSE; token usage in SSE `usage` event (no tool branches executed).
-- **M4b**: `Reasoning` → `Tool Selection` → `Execution` → `Validation` → `Response` with MCP; built-in cost tracking persisted per step where required.
+### Reasoning Loop Logic
+- **M4a (shipped)**: Single-turn LLM over SSE; token counts in SSE `usage`.
+- **M4b (post-M5)**: `Reasoning` → tool selection → MCP execution → validation → response; cost tracking persisted per step where required.
 
 ## 4. Security & Safety
 - **Isolation**: Row Level Security (RLS) for every entity (Skills, Agents, Sessions).
-- **Sandboxing (M4b+)**: MCP tools are strictly restricted by the Agent Template definition once tool execution ships.
+- **Sandboxing (M4b+)**: MCP tools restricted by agent/skill policy once the tool loop ships (**after M5**).

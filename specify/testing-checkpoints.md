@@ -27,9 +27,9 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 | Manual (recommended once per env) | `make m4a-smoke` with **`M4A_LLM_API_KEY`** (see `scripts/dev/m4a-mvp-smoke.sh`), or `curl -N` on `POST /org/agents/<id>/complete/stream` (README). |
 | Gate | **Do not** start MCP client / tool orchestration work until MVP checklist is signed off (roadmap **M4b**). |
 
-## M4b — after MVP (MCP, persistence, full loop)
+## M4b — MCP, persistence, full loop (**in progress**)
 
-1. **After Phase 4 (MCP)** — **Manual**: local stub MCP or sandbox; timeout and error paths.
+1. **After Phase 4 (MCP HTTP client)** — **`cargo test`** covers wiremock JSON-RPC stubs; **Manual**: point `McpHttpJsonRpcClient` at a real MCP HTTP endpoint (skill row); timeout and error paths.
 2. **After Phase 5–6 (persistence + orchestration)** — **Manual + DB**: execution/metrics tables and RLS across orgs.
 
 **Rule of thumb**: use **wiremock / CI** for LLM until you need a real provider; add **real MCP** only when implementing M4b.

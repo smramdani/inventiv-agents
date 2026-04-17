@@ -71,17 +71,17 @@ Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ---
 
-## Phase 4 — MCP client (minimal vertical slice) — **DEFERRED (M4b)**
+## Phase 4 — MCP client (minimal vertical slice) — **M4b (in progress)**
 
-**Status**: **Not in MVP.** Implement only after **`specify/mvp-engine-validation.md`** is signed off.
+**Status**: First HTTP JSON-RPC slice shipped; orchestration in Phase 6 still wires this into the live API path.
 
 **Purpose**: JSON-RPC over HTTP(S) toward MCP servers registered as skills (M3).
 
-- [ ] **T4.10** `[Infra]` Implement MCP **tool list / invoke** client in `src/infrastructure/mcp/` with strict timeouts and size limits; configuration from `Skill` rows (endpoint, metadata).
-- [ ] **T4.11** `[Domain]` **[US.2]** Map MCP tool definitions to the reasoning loop’s tool-selection step (subset acceptable for first slice: single tool invocation on demand).
-- [ ] **T4.12** `[Domain]` `mod tests` for MCP argument validation and error mapping.
+- [x] **T4.10** `[Infra]` Implement MCP **tool list / invoke** client in `src/infrastructure/mcp/` with strict timeouts and size limits; configuration from `Skill` rows (endpoint, metadata) via `McpHttpJsonRpcClient::new(skill_endpoint_url)`.
+- [x] **T4.11** `[Domain]` **[US.2]** Minimal mapping: `select_unique_tool_name` when the server exposes exactly one tool (orchestrator disambiguation later).
+- [x] **T4.12** `[Domain]` `validate_mcp_invoke_request` + `mod tests` for empty tool name and singleton selection.
 
-**Checkpoint**: At least one integration or contract-style test against a stub MCP server or hyper test server.
+**Checkpoint**: Contract tests with **wiremock** stub JSON-RPC (`tools/list`, `tools/call`) in `src/infrastructure/mcp/http_client.rs`.
 
 ---
 
@@ -127,8 +127,8 @@ Use **`specify/mvp-engine-validation.md`** as the authoritative checklist (autom
 
 ## Dependencies (summary)
 
-1. **M4a**: Phases **1 → 2 → 3** only; validate with **`mvp-engine-validation.md`** before starting M4b.  
-2. **M4b**: Phase **4** (MCP) can start after MVP sign-off; **5** before persistence-heavy assertions in **6**.  
+1. **M4a**: Phases **1 → 2 → 3**; validate with **`mvp-engine-validation.md`** (manual SSE + sign-off still recommended for production readiness).  
+2. **M4b**: Phase **4** (MCP HTTP client) is underway; **5** (persistence) before persistence-heavy assertions in **6** (orchestration).  
 3. Phase 2 before Phase 3 (streaming needs LLM adapter).
 
 ---

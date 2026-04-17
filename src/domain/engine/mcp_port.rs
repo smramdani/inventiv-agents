@@ -47,6 +47,27 @@ pub trait McpInvocationPort: Send + Sync {
     async fn invoke(&self, req: McpInvokeRequest) -> Result<McpInvokeResult, McpInvocationError>;
 }
 
+/// Validates an invoke request before transport (T4.12).
+pub fn validate_mcp_invoke_request(req: &McpInvokeRequest) -> Result<(), McpInvocationError> {
+    let name = req.tool_name.trim();
+    if name.is_empty() {
+        return Err(McpInvocationError::InvalidArguments(
+            "tool_name must not be empty".into(),
+        ));
+    }
+    Ok(())
+}
+
+/// Trivial tool-selection slice (M4b / T4.11): if the server exposes exactly one tool, use it.
+/// Otherwise returns [`None`] so orchestration must disambiguate.
+pub fn select_unique_tool_name(tools: &[McpToolDefinition]) -> Option<String> {
+    if tools.len() == 1 {
+        Some(tools[0].name.clone())
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -65,6 +86,42 @@ mod tests {
         ) -> Result<McpInvokeResult, McpInvocationError> {
             Err(McpInvocationError::UnknownTool("none".into()))
         }
+    }
+
+    #[test]
+    fn validate_rejects_empty_tool_name() {
+        let req = McpInvokeRequest {
+            tool_name: "   ".into(),
+            arguments: serde_json::json!({}),
+        };
+        assert!(matches!(
+            validate_mcp_invoke_request(&req),
+            Err(McpInvocationError::InvalidArguments(_))
+        ));
+    }
+
+    #[test]
+    fn select_unique_tool_name_only_when_singleton() {
+        assert_eq!(select_unique_tool_name(&[]), None::<String>);
+        let one = vec![McpToolDefinition {
+            name: "only".into(),
+            description: None,
+            input_schema: None,
+        }];
+        assert_eq!(select_unique_tool_name(&one), Some("only".into()));
+        let two = vec![
+            McpToolDefinition {
+                name: "a".into(),
+                description: None,
+                input_schema: None,
+            },
+            McpToolDefinition {
+                name: "b".into(),
+                description: None,
+                input_schema: None,
+            },
+        ];
+        assert_eq!(select_unique_tool_name(&two), None);
     }
 
     #[tokio::test]

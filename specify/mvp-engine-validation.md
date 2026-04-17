@@ -1,6 +1,6 @@
 # MVP validation — Agent engine **without tools** and **without MCP**
 
-This checklist is the **current** acceptance target for Milestone **M4 (MVP slice)** per roadmap update: prove identity, registry, LLM resolution, and **SSE completion** end-to-end before implementing MCP clients, tool execution, or run persistence (Phases 4–6 of `004_milestone_4.md`).
+This checklist is the **M4a** acceptance target for Milestone **M4 (MVP slice)** per roadmap update: prove identity, registry, LLM resolution, and **SSE completion** end-to-end. **M4b** (MCP client, persistence, full loop) continues in `004_milestone_4.md` **after** the automated + manual gates below; the HTTP MCP client (Phase 4) does not replace the SSE sign-off for M4a.
 
 ## How to run it (order)
 

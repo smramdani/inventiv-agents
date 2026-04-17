@@ -147,6 +147,8 @@ Load `.env` for any command: `./scripts/dev/with-env.sh cargo clippy --all-targe
 
 **MVP engine (no MCP / no tools)** — validation checklist: `specify/mvp-engine-validation.md` (Spec Kit **M4a**). **`make check`** runs the full test suite when Docker **or** host Postgres (TCP) is available; if neither is reachable, it falls back to **library unit tests only** (same scope as `make check-local`). Use **`make check-local`** to force that path without probing Docker/Postgres.
 
+**M4b — MCP (Phase 4, in progress)** — HTTP JSON-RPC client: `inventivagents::infrastructure::mcp::McpHttpJsonRpcClient` implements `McpInvocationPort` (`tools/list`, `tools/call`) against an MCP skill **`endpoint_url`**. Domain helpers: `validate_mcp_invoke_request`, `select_unique_tool_name`. Not yet wired to the public HTTP agent stream (Phase 6). Spec: `specify/tasks/004_milestone_4.md`.
+
 ### Docker troubleshooting (local)
 
 - **`Cannot connect to the Docker daemon`**: start Docker Desktop (macOS/Windows) or `sudo systemctl start docker` on Linux.
@@ -220,4 +222,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** engine (LLM + SSE); local dev scripts (Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`). Validate M4a with `specify/mvp-engine-validation.md`. **M4b** deferred per `specify/plan.md`.
+**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M4b Phase 4** (HTTP MCP client, wiremock-tested). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/004_milestone_4.md`.

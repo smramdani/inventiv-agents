@@ -9,6 +9,7 @@ pub use llm_port::{
     LlmMessage, TokenUsage,
 };
 pub use mcp_port::{
-    McpInvocationError, McpInvocationPort, McpInvokeRequest, McpInvokeResult, McpToolDefinition,
+    select_unique_tool_name, validate_mcp_invoke_request, McpInvocationError, McpInvocationPort,
+    McpInvokeRequest, McpInvokeResult, McpToolDefinition,
 };
 pub use reasoning::{EngineError, ReasoningPhase, TransitionInput};

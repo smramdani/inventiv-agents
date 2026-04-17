@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **M4b Phase 4 (Spec Kit)**: `src/infrastructure/mcp/` — `McpHttpJsonRpcClient` implements `McpInvocationPort` (JSON-RPC `tools/list` / `tools/call` over HTTP POST, 30s timeout, 2 MiB response cap). Domain: `validate_mcp_invoke_request`, `select_unique_tool_name`. Wiremock contract tests in `http_client.rs`. Docs: `README.md`, `specify/plan.md`, `specify/tasks/004_milestone_4.md`, `mvp-engine-validation.md`, `testing-checkpoints.md`.
+
 ## [0.1.2] - 2026-04-14
 
 ### Changed

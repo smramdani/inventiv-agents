@@ -110,6 +110,23 @@ cargo:
 	@$(WITH) cargo $(ARGS)
 
 # ---------------------------------------------------------------------------
+# Frontend (Vite cockpit in frontend/)
+# ---------------------------------------------------------------------------
+.PHONY: fe-install fe-dev fe-build fe-lint
+
+fe-install:
+	cd frontend && npm install
+
+fe-dev:
+	cd frontend && npm run dev
+
+fe-build:
+	cd frontend && npm run build
+
+fe-lint:
+	cd frontend && npm run lint
+
+# ---------------------------------------------------------------------------
 # Deploy stubs (replace bodies with gh / kubectl / your CD tool)
 # ---------------------------------------------------------------------------
 REF ?= latest

@@ -63,6 +63,9 @@ async fn register_login_whoami_smoke() -> anyhow::Result<()> {
         )
         .await?;
     assert_eq!(res.status(), StatusCode::OK);
+    let bytes = res.into_body().collect().await?.to_bytes();
+    let me: serde_json::Value = serde_json::from_slice(&bytes)?;
+    assert_eq!(me["role"], "Owner");
 
     Ok(())
 }

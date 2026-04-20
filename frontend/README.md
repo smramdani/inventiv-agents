@@ -1,9 +1,30 @@
-# Frontend (M5 — Sovereign Cockpit)
+# InventivAgents Cockpit (M5)
 
-Application web **cockpit** : auth, registre (providers / skills / agents), sessions SSE, usage/cost.
+Vite + React + TypeScript SPA : authentification (`/auth/login`, `/auth/whoami`), registre org (`/org/register`), écran **Registry** (Owner/Admin), **Chat** SSE vers `POST /org/agents/:id/complete/stream`, affichage du dernier bloc **usage**.
 
-Le dépôt est un **monorepo** : le code front vivra ici (`frontend/`) ; l’API Rust est dans `../backend/`. Les specs et le tooling partagés restent à la **racine** (`specify/`, `scripts/`, `Makefile`, `docker-compose.yml`).
+## Prérequis
 
-## Prochaines étapes
+- API Rust en marche (`make run` depuis la racine du monorepo).
+- CORS : par défaut le backend autorise `http://127.0.0.1:5173` et `http://localhost:5173`. Pour d’autres origines, définir **`INVENTIV_CORS_ORIGINS`** (liste séparée par des virgules) dans la `.env` chargée par l’API.
 
-Choisir une stack (ex. Vite + React, Next.js), ajouter `package.json` / lockfile, et documenter `npm run dev` dans le README racine une fois le squelette en place.
+## Variables
+
+Créer `frontend/.env.local` (non versionné) si besoin :
+
+```bash
+# URL de l’API (sans slash final)
+VITE_API_BASE=http://127.0.0.1:8080
+```
+
+## Commandes
+
+```bash
+npm install
+npm run dev      # http://127.0.0.1:5173
+npm run build
+npm run lint     # tsc --noEmit
+```
+
+Depuis la racine du repo : `make fe-install`, `make fe-dev`, `make fe-build`, `make fe-lint`.
+
+JWT : stockage **sessionStorage** (`inventiv_jwt`), effacé à la fermetur du onglet.

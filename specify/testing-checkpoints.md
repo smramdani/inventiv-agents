@@ -4,7 +4,7 @@ This note complements **Constitution VIII** (tests) and **XIV** (layer gates). I
 
 ## Every milestone (always)
 
-- After each **task group / PR**: `make check` or at least `cargo test` (unit + integration where Docker is available).
+- After each **task group / PR**: `make check` or at least `cargo test` (unit + integration where Docker is available). After **`frontend/`** changes: also **`make fe-lint`** (and **`make fe-build`** before release).
 - After changes to **`scripts/dev/lib.sh`** or Docker-related workflows: **`make verify-bootstrap`** (stubbed `docker` / stripped `PATH`; no daemon required).
 - Before calling a milestone **done**: satisfy the **Validation** section in that milestone’s task file (e.g. `specify/tasks/003_milestone_3.md`, `004_milestone_4.md`).
 
@@ -31,11 +31,12 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 
 Tasks: **`specify/tasks/005_milestone_5.md`**.
 
-- After first **authenticated UI** path: smoke in browser (login, empty states).
-- After **registry screens** (providers, skills, agents): CRUD against existing APIs with JWT.
-- After **SSE session UX**: stream against `POST /org/agents/<id>/complete/stream`; trace id visible where applicable.
-- After **session sharing**: two browsers / two users, RLS checks.
-- Before release: **accessibility**, **audit log** export, and **cost dashboard** spot-check against known test data.
+| Step | Action |
+|------|--------|
+| Automated (FE) | From repo root: **`make fe-lint`** (`tsc --noEmit`), **`make fe-build`** (bundle). Run after substantive `frontend/` changes. |
+| Manual (local) | Terminal A: **`make run`** (API). Terminal B: **`make fe-dev`** → open Vite URL; ensure **`.env`** for API includes **`INVENTIV_CORS_ORIGINS`** matching the Vite origin if not default (`127.0.0.1:5173` / `localhost:5173`). Optional: `frontend/.env.local` with **`VITE_API_BASE`**. |
+| Smoke | Register org → login → **Registry** (Owner/Admin): provider + key, agent with provider → **Chat**: SSE stream, **`usage`** panel updates, **`meta.trace_id`** visible. |
+| Later | Session sharing (two browsers), accessibility, audit export, persisted cost dashboard — as those features land. |
 
 ## M4b — MCP, persistence, full loop (**after M5**)
 

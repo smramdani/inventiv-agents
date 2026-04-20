@@ -35,6 +35,13 @@ Simple verbs (easy to remember)
   make lint            Clippy only (cargo clippy --all-targets -D warnings).
   make clean           cargo clean (backend/ crate)
 
+Frontend (M5 cockpit, frontend/)
+--------------------------------
+  make fe-install      npm install in frontend/
+  make fe-dev            Vite dev server (default :5173; set VITE_API_BASE in frontend/.env.local)
+  make fe-build          Typecheck + production bundle
+  make fe-lint           tsc --noEmit
+
 Precise / low-level (same names as dev.sh)
 ------------------------------------------
   make env             Ensure .env exists.

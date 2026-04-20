@@ -28,10 +28,12 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 | Path | Role |
 |------|------|
 | **`backend/`** | API Rust (`Cargo.toml`, `src/`, `tests/`, `migrations/`). |
-| **`frontend/`** | Application web cockpit (M5) — squelette documenté dans `frontend/README.md`. |
+| **`frontend/`** | Cockpit Vite + React (M5) — `npm run dev` ou `make fe-dev` ; voir `frontend/README.md`. |
 | **Racine** | Spec Kit (`specify/`, `.specify/`), Docker Compose, `Makefile`, `scripts/`, `README`, `CHANGELOG`. |
 
 Les commandes **`make`** / **`./scripts/dev/dev.sh`** exécutent **cargo** dans `backend/` automatiquement. **`./scripts/dev/with-env.sh cargo …`** en fait autant lorsque la première commande est `cargo`.
+
+**Cockpit (front)** : depuis la racine, `make fe-install` puis `make fe-dev` (API sur `8080` par défaut). CORS côté API : variable **`INVENTIV_CORS_ORIGINS`** (voir `.env.example`) ; le front peut fixer **`VITE_API_BASE`** dans `frontend/.env.local`.
 
 ## 🛠 Tech Stack
 

@@ -152,11 +152,11 @@ pub async fn create_agent(
     }))
 }
 
+/// Any authenticated org member may list agents (e.g. cockpit chat picker for `User` role).
 pub async fn list_agents(
     State(db): State<DatabasePool>,
     AuthenticatedUser(claims): AuthenticatedUser,
 ) -> AppResult<Json<Vec<Agent>>> {
-    require_admin_or_owner(&claims)?;
     let org_id = claims.org_id;
 
     let mut tx = db.get_pool().begin().await?;

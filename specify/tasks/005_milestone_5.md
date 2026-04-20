@@ -26,11 +26,16 @@ Deliver the first **authenticated web client** (or SPA) so organizations can use
 
 ## Tasks (outline — expand in follow-up PRs)
 
-- [x] **T5.1** `[FE]` Repo layout: **`backend/`** (Rust API) + **`frontend/`** (cockpit) at repo root; shared tooling at root (`Makefile`, `scripts/`, `specify/`). Next: scaffold app inside `frontend/` (Vite/React or similar); AGPL-3.0 compliance for bundled assets.
-- [ ] **T5.2** `[FE]` Auth: login / register flows against existing `/org/register`, `/auth/login`, JWT storage (secure), `/auth/whoami`.
-- [ ] **T5.3** `[FE]` Admin paths: list/create LLM providers, skills, agents (M3 APIs); role-gated UI.
-- [ ] **T5.4** `[FE]` User path: start a **session** (or equivalent) calling **`POST /org/agents/:id/complete/stream`** with SSE consumer (EventSource / fetch stream).
-- [ ] **T5.5** `[FE]` Owner / cost: first **usage** view (even if v1 reads last SSE `usage` client-side only; align later with persisted metrics post-M4b).
-- [ ] **T5.6** Cross-cutting: README, CHANGELOG, `specify/testing-checkpoints.md` M5 gates.
+- [x] **T5.1** `[FE]` Repo layout: **`backend/`** (Rust API) + **`frontend/`** (cockpit) at repo root; shared tooling at root (`Makefile`, `scripts/`, `specify/`). Vite + React app under `frontend/`.
+- [x] **T5.2** `[FE]` Auth: login / register flows against existing `/org/register`, `/auth/login`, JWT storage (secure), `/auth/whoami`.
+- [x] **T5.3** `[FE]` Admin paths: list/create LLM providers, skills, agents (M3 APIs); role-gated UI.
+- [x] **T5.4** `[FE]` User path: start a **session** (or equivalent) calling **`POST /org/agents/:id/complete/stream`** with SSE consumer (EventSource / fetch stream).
+- [x] **T5.5** `[FE]` Owner / cost: first **usage** view (even if v1 reads last SSE `usage` client-side only; align later with persisted metrics post-M4b).
+- [x] **T5.6** Cross-cutting: README, CHANGELOG, `specify/testing-checkpoints.md` M5 gates.
 
 **Checkpoint**: Manual smoke: two browsers or two users for session sharing when that feature lands; `make check` green for backend; FE lint/build in CI when wired.
+
+**Implemented (v1 cockpit)**:
+
+- **API**: `INVENTIV_CORS_ORIGINS`, **`GET /auth/whoami`** returns **`role`**, **`GET /org/agents`** allowed for any authenticated org member (chat picker for `User`).
+- **FE**: Vite + React + TS in `frontend/` — routes `/login`, `/register`, `/`, `/registry`, `/chat`; `make fe-install` / `fe-dev` / `fe-build` / `fe-lint`.

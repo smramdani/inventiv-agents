@@ -58,4 +58,4 @@ Use a **test** API key and model on your provider (never commit secrets).
 
 - **Owner / Tech lead**: name, date — MVP engine (no tools, no MCP) validated: **yes / no**.
 
-When **yes**, proceed to **M5** (cockpit / front-end) per **`specify/tasks/005_milestone_5.md`** and `specify/plan.md`. **M4b** (MCP + tools in loop + persistence) follows **after M5**.
+When **yes**, proceed to **M5** (cockpit) per **`specify/tasks/005_milestone_5.md`** and `specify/plan.md` — start with **M5a** (ephemeral UI); **M5b** adds §5 sessions. **M4b** (MCP + tools in loop + persistence) follows **after M5** on the roadmap.

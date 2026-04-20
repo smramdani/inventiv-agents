@@ -28,12 +28,12 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 | Path | Role |
 |------|------|
 | **`backend/`** | API Rust (`Cargo.toml`, `src/`, `tests/`, `migrations/`). |
-| **`frontend/`** | Cockpit Vite + React (M5) — `npm run dev` ou `make fe-dev` ; voir `frontend/README.md`. |
+| **`frontend/`** | Cockpit Vite + React (**M5a**) — `npm run dev` ou `make fe-dev` ; voir `frontend/README.md`. |
 | **Racine** | Spec Kit (`specify/`, `.specify/`), Docker Compose, `Makefile`, `scripts/`, `README`, `CHANGELOG`. |
 
 Les commandes **`make`** / **`./scripts/dev/dev.sh`** exécutent **cargo** dans `backend/` automatiquement. **`./scripts/dev/with-env.sh cargo …`** en fait autant lorsque la première commande est `cargo`.
 
-**Cockpit (front)** : depuis la racine, `make fe-install` puis `make fe-dev` (API sur `8080` par défaut). CORS côté API : variable **`INVENTIV_CORS_ORIGINS`** (voir `.env.example`) ; le front peut fixer **`VITE_API_BASE`** dans `frontend/.env.local`.
+**Cockpit (front)** : depuis la racine, `make fe-install` puis `make fe-dev` (API sur `8080` par défaut). CORS côté API : variable **`INVENTIV_CORS_ORIGINS`** (voir `.env.example`) ; le front peut fixer **`VITE_API_BASE`** dans `frontend/.env.local`. Périmètre **M5a** (chat éphémère, sans sessions persistées) vs **M5b** : voir **`specify/spec.md` §5–7** et **`specify/tasks/005_milestone_5.md`**.
 
 ## 🛠 Tech Stack
 
@@ -234,4 +234,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5** (cockpit / front-end — **current**). **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `backend/src/infrastructure/mcp/` is library-only until then. Layout: `backend/` (API), `frontend/` (UI). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.
+**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5a** (cockpit v1 — **current**); **M5b** (sessions §5) next. **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `backend/src/infrastructure/mcp/` is library-only until then. Layout: `backend/` (API), `frontend/` (UI). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.

@@ -11,7 +11,7 @@
 Use as the **completion gate** for M4. Mark **N/A** only where noted.
 
 ### Vertical slice
-- **Story linkage (M4a MVP)**: **US.4** narrowed to **single-turn, no-tool** use: authenticated user invokes a configured agent (with LLM provider) and receives an **SSE** model response. **US.1** (provider registration) is supported by APIs; **US.2** / **US.3** (MCP + toolbelt **in the reasoning loop**) are **M4b after M5** (see `plan.md`). **M5** covers **US.4**/**US.5**-oriented **UX** (cockpit, sessions, first cost views).
+- **Story linkage (M4a MVP)**: **US.4** narrowed to **single-turn, no-tool** use: authenticated user invokes a configured agent (with LLM provider) and receives an **SSE** model response. **US.1** (provider registration) is supported by APIs; **US.2** / **US.3** (MCP + toolbelt **in the reasoning loop**) are **M4b after M5** (see `plan.md`). **M5a** covers **US.4**-oriented **cockpit UX** (ephemeral chat); **M5b** covers persisted **sessions** / sharing per `spec.md` §5; **US.5** depth ties to **M4b** metrics + **M5b** reporting (see `005_milestone_5.md`).
 - **Independent value**: A client can call the streaming completion API without M5 UI, without MCP, and without executing skills — demonstrable with `curl` + integration tests.
 - **Artifacts**: `specify/spec.md`, `specify/plan.md`, `specify/mvp-engine-validation.md`, and this file stay aligned (XII); scope changes are updated in spec/plan first.
 
@@ -130,14 +130,14 @@ Use **`specify/mvp-engine-validation.md`** as the authoritative checklist (autom
 ## Dependencies (summary)
 
 1. **M4a**: Phases **1 → 3**; validate with **`mvp-engine-validation.md`**.  
-2. **M5**: Cockpit / front-end — **`005_milestone_5.md`**.  
-3. **M4b**: Phases **4–6** (MCP product integration, persistence, orchestration) **after M5**.  
-3. Phase 2 before Phase 3 (streaming needs LLM adapter).
+2. **M5**: Cockpit — **`005_milestone_5.md`** (**M5a** shipped, **M5b** sessions when scheduled).  
+3. **M4b**: Phases **4–6** (MCP product integration, persistence, orchestration) **after M5** (per roadmap).  
+4. Phase 2 before Phase 3 (streaming needs LLM adapter).
 
 ---
 
 ## Notes
 
 - If scope is too large for one increment, split behind feature flags **via configuration** (XV), not compile-time `env == "prod"`.
-- Full **session sharing** and cockpit UX are **M5 (current)** per `specify/plan.md`; **M4b** follows M5.
+- **Session sharing** and persisted **sessions** are **M5b** (`specify/spec.md` §5, `005_milestone_5.md`); **M5a** is ephemeral chat only. **M4b** follows the **M5** milestone track per `specify/plan.md`.
 - The domain trait **`McpInvocationPort`** (Phase 1) remains a boundary for M4b; **no MCP adapter** is required for M4a MVP sign-off.

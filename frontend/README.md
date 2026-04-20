@@ -1,22 +1,24 @@
-# InventivAgents Cockpit (M5)
+# InventivAgents Cockpit (M5a)
 
-Vite + React + TypeScript SPA : authentification (`/auth/login`, `/auth/whoami`), registre org (`/org/register`), écran **Registry** (Owner/Admin), **Chat** SSE vers `POST /org/agents/:id/complete/stream`, affichage du dernier bloc **usage**.
+Vite + React + TypeScript SPA: authentication (`/auth/login`, `/auth/whoami`), organization registration (`/org/register`), **Registry** (Owner/Admin: providers, skills, agents), **ephemeral** SSE chat to `POST /org/agents/:id/complete/stream`, last **`usage`** event display.
 
-## Prérequis
+**Scope**: **M5a** only — no persisted server-side sessions. **M5b** (sessions, group sharing) and full **US.5** on persisted `metrics` are defined in **`../specify/spec.md` §5–7** and **`../specify/tasks/005_milestone_5.md`**.
 
-- API Rust en marche (`make run` depuis la racine du monorepo).
-- CORS : par défaut le backend autorise `http://127.0.0.1:5173` et `http://localhost:5173`. Pour d’autres origines, définir **`INVENTIV_CORS_ORIGINS`** (liste séparée par des virgules) dans la `.env` chargée par l’API.
+## Prerequisites
 
-## Variables
+- Rust API running (`make run` from monorepo root).
+- CORS: the API allows `http://127.0.0.1:5173` and `http://localhost:5173` by default. Set **`INVENTIV_CORS_ORIGINS`** (comma-separated) in the API `.env` for other origins.
 
-Créer `frontend/.env.local` (non versionné) si besoin :
+## Environment
+
+Create `frontend/.env.local` (gitignored) if needed:
 
 ```bash
-# URL de l’API (sans slash final)
+# API base URL (no trailing slash)
 VITE_API_BASE=http://127.0.0.1:8080
 ```
 
-## Commandes
+## Commands
 
 ```bash
 npm install
@@ -25,6 +27,6 @@ npm run build
 npm run lint     # tsc --noEmit
 ```
 
-Depuis la racine du repo : `make fe-install`, `make fe-dev`, `make fe-build`, `make fe-lint`.
+From repo root: `make fe-install`, `make fe-dev`, `make fe-build`, `make fe-lint`.
 
-JWT : stockage **sessionStorage** (`inventiv_jwt`), effacé à la fermetur du onglet.
+JWT is stored in **sessionStorage** (`inventiv_jwt`) and cleared when the tab is closed.

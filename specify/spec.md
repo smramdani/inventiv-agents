@@ -14,7 +14,8 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to deploy safe, 
 
 ## 3. Sovereign Provider Management (v1.0.0)
 - **Managed APIs**: Admins register LLM providers (OVH Cloud AI, Scaleway, Azure OpenAI) via API URL and Keys.
-- **Usage Tracking**: Systematically log token consumption in the `metrics` table for cost analysis.
+- **Usage Tracking (target)**: Systematically log token consumption in the **`metrics`** table for cost analysis (**US.5** at full maturity).
+- **Usage in the cockpit (M5a, shipped)**: The web client surfaces the **last `usage` object** from the SSE stream for the current turn (read-only, client-side). This is an **intentional subset** of US.5 until **M4b** persistence and reporting exist; see §7 **M5a / M5b** and `specify/tasks/005_milestone_5.md`.
 
 ## 4. Skills, Agents & MCP (v1.0.0)
 ### MCP Skills
@@ -26,9 +27,13 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to deploy safe, 
 - **Control**: Admins decide which Agents have access to which Skills.
 
 ## 5. Agentic Sessions & Collaboration (v1.0.0)
-- **Execution Space**: Multi-tenant context where reasoning loops occur.
-- **Context**: Document uploads (RAG) and message history.
-- **Sharing**: Sessions can be shared within a Group for collaboration.
+
+**Target product (this section)**: A durable **Session** is the multi-tenant execution space for an agent conversation: message history, optional document context (RAG), and **sharing within a Group** for collaboration.
+
+**Phased delivery (aligned with milestone 5 tasks)** — per **Constitution XII** (spec/plan/tasks stay in sync):
+
+- **M5a (shipped — “Sovereign Cockpit” v1)**: Authenticated **web client** with registry CRUD (create/list) for providers, skills, and agents, plus **single-turn / ephemeral chat** against the existing M4a endpoint **`POST /org/agents/:id/complete/stream`** (SSE). There is **no persisted `sessions` table**, no server-side message history, and no group-based sharing yet. This satisfies an early **US.4**-style slice (“talk to an agent in the browser”) without claiming full §5 semantics.
+- **M5b (planned)**: Persisted **sessions** (schema + RLS under **`backend/migrations/`**), message history, sharing rules per **§2 Groups**, and cockpit UX for session list/resume/share. Tracked as follow-up work in **`specify/tasks/005_milestone_5.md`**.
 
 ## 6. User Stories (MVP)
 - **US.1 (Admin)**: I want to register an **OVH Cloud AI** endpoint so our data remains within European sovereignty.
@@ -41,7 +46,10 @@ An open-source B2B agentic AI platform (AGPL-3.0) enabling SMEs to deploy safe, 
 
 **M4a (shipped)**: Headless **agentic engine** without tool execution in the product path: OpenAI-compatible **LLM**, org-scoped **provider resolution**, **SSE** completion, **TraceID** / structured logging. Minimal **US.4** slice for API clients.
 
-**M5 (current priority)**: **Sovereign Cockpit** — first **web front-end**: authenticated flows, registry UX (providers, skills, agents using existing APIs), **sessions** with SSE against M4a, first **usage / cost** visibility; session sharing as designed. Tasks: **`specify/tasks/005_milestone_5.md`**.
+**M5 (current priority)**, split per §5:
+
+- **M5a (shipped)**: **Sovereign Cockpit v1** — `frontend/` Vite/React SPA: **register / login**, **registry** (create + list providers, skills, agents; Owner/Admin), **ephemeral SSE chat** + **last-turn usage** display, **CORS** and **`whoami` role** for RBAC in the UI. Does **not** include persisted sessions, group sharing, or full **US.5** reporting. Tasks and traceability: **`specify/tasks/005_milestone_5.md`** (T5.1–T5.6 for M5a scope).
+- **M5b (next within M5)**: Persisted **sessions**, history, and **collaboration** as in §5; extends the same milestone file with new tasks before marking “M5 complete” against §5–6.
 
 **M4b (after M5)**: **US.2** (MCP skills **in the reasoning loop**), full **US.3**-style toolbelt orchestration, **persistence of runs/metrics** (RLS) — `specify/tasks/004_milestone_4.md` Phases **4–6**. An HTTP MCP **client library** may exist earlier as a non-product-critical foundation; **wiring** into live agent streams is **post-M5**.
 

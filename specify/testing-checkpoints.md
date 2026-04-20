@@ -29,14 +29,27 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 
 ## M5 (cockpit) — **current priority**
 
-Tasks: **`specify/tasks/005_milestone_5.md`**.
+Tasks and phased scope: **`specify/tasks/005_milestone_5.md`**. Product wording: **`specify/spec.md` §5–7** (**M5a** vs **M5b**).
+
+### M5a (cockpit v1 — shipped)
 
 | Step | Action |
 |------|--------|
-| Automated (FE) | From repo root: **`make fe-lint`** (`tsc --noEmit`), **`make fe-build`** (bundle). Run after substantive `frontend/` changes. |
-| Manual (local) | Terminal A: **`make run`** (API). Terminal B: **`make fe-dev`** → open Vite URL; ensure **`.env`** for API includes **`INVENTIV_CORS_ORIGINS`** matching the Vite origin if not default (`127.0.0.1:5173` / `localhost:5173`). Optional: `frontend/.env.local` with **`VITE_API_BASE`**. |
-| Smoke | Register org → login → **Registry** (Owner/Admin): provider + key, agent with provider → **Chat**: SSE stream, **`usage`** panel updates, **`meta.trace_id`** visible. |
-| Later | Session sharing (two browsers), accessibility, audit export, persisted cost dashboard — as those features land. |
+| Automated (FE) | **`make fe-lint`**, **`make fe-build`** after substantive `frontend/` changes. |
+| Manual (local) | **`make run`** + **`make fe-dev`**; **`.env`**: **`INVENTIV_CORS_ORIGINS`** must include the Vite origin; optional **`VITE_API_BASE`** in `frontend/.env.local`. |
+| Smoke | Register org → login → **Registry** (provider + key, agent) → **Chat**: SSE **`delta`**, **`usage`**, **`meta.trace_id`**. |
+| Spec Kit | Constitution **XIV** `[FE]`: loading/empty/error/success on main flows; **X** version in UI; **IX** telemetry still **partial** until M5b+ (see `005_milestone_5.md`). |
+
+### M5b (sessions §5 — not shipped)
+
+| Step | Action |
+|------|--------|
+| After **T5.7–T5.10** | Full `make check`; manual **two-user / two-browser** sharing smoke when session APIs exist; RLS assertions per org/group. |
+| After **T5.11** | Spot-check **US.5**-style views once **persisted metrics** exist (**M4b** Phase 5+). |
+
+### Later (cross-cutting)
+
+Accessibility hardening, audit log export, **CI** job for `fe-lint` / `fe-build` (**Constitution VIII / XV**), full **IX** frontend telemetry coverage — as adopted by the team.
 
 ## M4b — MCP, persistence, full loop (**after M5**)
 

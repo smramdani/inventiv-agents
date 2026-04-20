@@ -158,8 +158,10 @@ impl AgentsRepository {
         let rows: Vec<LlmProviderRow> = sqlx::query_as(
             r#"SELECT id, organization_id, name, base_url, is_active
                FROM llm_providers
+               WHERE organization_id = $1
                ORDER BY created_at"#,
         )
+        .bind(org_id)
         .fetch_all(&mut **tx)
         .await?;
 
@@ -202,8 +204,10 @@ impl AgentsRepository {
         let rows: Vec<SkillRow> = sqlx::query_as(
             r#"SELECT id, organization_id, name, description, type::text AS skill_type, endpoint_url, configuration, is_active
                FROM skills
+               WHERE organization_id = $1
                ORDER BY created_at"#,
         )
+        .bind(org_id)
         .fetch_all(&mut **tx)
         .await?;
 
@@ -250,8 +254,10 @@ impl AgentsRepository {
         let rows: Vec<AgentRow> = sqlx::query_as(
             r#"SELECT id, organization_id, llm_provider_id, name, mission, persona, is_active
                FROM agents
+               WHERE organization_id = $1
                ORDER BY created_at"#,
         )
+        .bind(org_id)
         .fetch_all(&mut **tx)
         .await?;
 

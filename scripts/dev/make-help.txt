@@ -42,6 +42,13 @@ Frontend (M5 cockpit, frontend/)
   make fe-build          Typecheck + production bundle
   make fe-lint           tsc --noEmit
 
+Story map (local backlog viewer, tools/storymap/)
+-------------------------------------------------
+  make storymap-install  npm install in tools/storymap/web/
+  make storymap-dev      Vite dev server (default :5190; JSON under tools/storymap/backlog/)
+  make storymap-build    Typecheck + static bundle to tools/storymap/web/dist/ (syncs backlog JSON + specify/ into public/)
+  make storymap-check-english  npm run check:english — backlog JSON + storymap docs + web/src must look English-only
+
 Precise / low-level (same names as dev.sh)
 ------------------------------------------
   make env             Ensure .env exists.

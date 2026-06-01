@@ -3,7 +3,7 @@
 ## Core Principles
 
 ### I. English-First (Open Source Standard)
-All documentation, specifications, code comments, variable names, and commit messages must be in English. This ensures maximum accessibility for the international open-source community.
+All **repository** documentation, specifications, roadmaps, backlogs, user stories in tooling, `README` / `CHANGELOG`, and contributor-oriented code comments must be in **English**. Variable names and commit messages follow the same rule. **Application localization** (end-user UI copy, locale catalogs, supported account locales such as `fr_FR` / `ar_SA`) is exempt: those artifacts exist solely for product i18n and may use multiple languages by design.
 
 ### II. Licensing (AGPL-3.0)
 The project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). All contributions must respect this license. Any derivative work or hosted version must make its source code available.
@@ -61,7 +61,7 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
 ### XII. Spec Kit & Spec-Driven Development (SDD)
 - **SDD Lifecycle**: No code implementation shall begin without a completed Spec (Functional), Technical Plan (Architecture), and Task List (Execution) generated via Spec Kit.
 - **Sync Requirement**: Artifacts must be kept in sync with the code. If the implementation deviates from the plan, the plan must be updated and ratified first.
-- **Traceability**: Every task in the task list must link back to a User Story or a specific technical requirement in the Spec.
+- **Traceability**: Every **technical task** must link back to **`specify/plan.md` §2** (milestone / prioritised backlog) and to **exactly one** **User Story** (**`US.1`–`US.15`**, **`specify/spec.md` §7**), with **Epic** (**`spec.md` §2**) on the same row for journey context. Each **`US.x`** is bound to **exactly one milestone** (so citing the **US** also pins the task to its **Epic** and **milestone**). When the **story map** (`tools/storymap/backlog/*.json`) is used, each **`userStoryId`** appears on **exactly one card** (= one card per US per milestone); **`columnId`** is the **owning Epic** column for that **US**; **`refs`** list every **`T###`** that implements that **US**. Data must stay consistent with **`specify/traceability.md`** so **Spec ↔ Traceability ↔ Plan ↔ Tasks ↔ Story map** stay aligned (**XVI**).
 - **Layered Definition of Done**: Before a feature or task group is marked complete, the criteria in **XIV** must be satisfied for every application layer the change touches. Use `/speckit.checklist` (or an equivalent review) to record layer gates when automation is not yet available.
 - **Release discipline**: Delivery pipelines follow **XV**—one immutable release artifact promoted across environments, with configuration and secrets external to the package.
 
@@ -75,9 +75,9 @@ Systematic use of the `Result<T, E>` type. No "panics" in production code (no `u
 Delivery must combine a **vertical slice owner** (end-to-end coherence for the user story or spec requirement) with explicit **layer gates** below. If a layer is not in scope, state **N/A** with a one-line rationale in the task notes or pull request.
 
 #### Vertical slice (always required)
-- **Story linkage**: Implementation maps to a User Story id or a numbered requirement in `specify/spec.md`; tasks cite that reference.
+- **Story linkage**: Implementation maps to **exactly one** **User Story** id (**`US.1`–`US.15`**, **`spec.md` §7**), **`plan.md` §2** milestone row, and the owning **Epic** id (**`spec.md` §2**); tasks cite those references. The cited **US** itself lives in **exactly one milestone**, so the task’s **Epic** + **Milestone** are determined by the **US** it cites.
 - **Independent value**: The slice can be tested and demonstrated without relying on unfinished sibling stories, except where the plan documents a hard dependency.
-- **Artifact alignment**: `specify/spec.md`, `specify/plan.md`, and the active task list reflect behavior shipped; any intentional deviation is updated in spec/plan first, per XII.
+- **Artifact alignment**: `specify/spec.md`, `specify/plan.md`, and the active task list reflect behavior shipped; when **`tools/storymap/backlog/*.json`** is maintained, it reflects the **same** prioritised **user stories** (**one card per `userStoryId`**, **`refs`** = **`T###`**) (**XVI**). Any intentional deviation is updated in spec/plan first, per XII.
 
 #### Database
 - **Migrations**: Schema changes use reviewed SQL migrations with clear upgrade semantics; risky changes note rollback or repair strategy.
@@ -121,6 +121,14 @@ These rules align delivery with **build once, promote many** and **twelve-factor
 - **CI** validates the same artifact shape used in production (tests, lint, SCA as adopted) and publishes a **versioned, immutable** output to a trusted registry or artifact store.
 - **CD** jobs perform **deploy and configure** only: roll out the pinned artifact, apply environment-specific **config** and **secrets**, run migrations when required, and verify health. **No drift** between “what was tested in staging” and “what runs in prod” except for explicitly externalized configuration and data.
 
+### XVI. Specification depth, epics, milestones, user stories, technical tasks, story map
+- **Top-down refinement (strategic → particular)**: Intent flows **down**: **`specify/spec.md`** (**§1** vision, **§2 Epics**, **§3** roles & org, **§§4–6** domain capabilities, **§7 User Stories** — **`US.1`–`US.15`**, each epic maps to one or more stories and each **US** belongs to **exactly one milestone**, **§8** milestones) → **`specify/plan.md`** (**§2** prioritised user stories **per milestone**, plus architecture §§1,3–4) → **`specify/traceability.md`** (**US ↔ `T###` ↔ milestone** matrix) → **`specify/tasks/*.md`** (**elementary technical tasks**—implementation, architecture, verification—for that milestone) → **code**. Lower layers must remain **traceable upward**; no orphan tasks without a **`plan.md` §2** milestone slice and **`spec.md`** anchor (**Epic** + **exactly one `US.x`** per task row).
+- **User story ids vs technical task ids**: **`US.1`–`US.15`** (**`spec.md` §7**) denote **product value** for personas and journeys; **each `US.x` belongs to exactly one milestone** — when a theme spans milestones, it is **split into separate `US.x`** (e.g. `US.7` cockpit chat in **M5a** vs `US.11` persisted sessions in **M5b** vs `US.12` tool-augmented chat in **M4b**). **`T###`** (**`specify/tasks/*.md`**) denotes **implementation** work (DB, API, domain, FE, tests, docs); each **`T###`** therefore belongs to exactly one **US**, one **Epic**, and one **milestone**. **Each `T###` row cites exactly one `US.x`**; **several `T###` rows** may **implement the same `US.x`**. Do not treat **`T###`** as a synonym for a user story, do not duplicate a **`US.x`** across milestones, and do not invent informal **`US`** ids — add a proper **`US.x`** in **`spec.md` §7** (new milestone slice) when the product gains a new outcome, then new **`T###`** rows.
+- **Bottom-up time horizon**: **Shipped or in-flight** work must be expressed at **testable** granularity—**technical tasks** with acceptance criteria and XIV layer gates—**before** merge. **Future milestones** may stay at **epic / milestone** level in **spec §8** and **plan §2** until **prioritised**; once scheduled, authors **must decompose** into **tasks** and, where the story map is used, into **one card per `userStoryId`** with **`refs`** to **`T###`** **before** coding starts (extends XII).
+- **Story map cards**: **One card = one `US.x`** (= one US per milestone, since each US is bound to a single milestone); **`refs`** carry **all `T###`** for that **US**. **Task file lines** (**`T###`** — globally unique, see `specify/plan.md` §2.0) remain **PR-sized** implementation items; they do **not** each get their own story-map card. The viewer rejects backlog files where the same **`userStoryId`** appears on more than one card or on more than one milestone. See `tools/storymap/docs/format.md`.
+- **Story map role**: `tools/storymap/` (JSON backlog + viewer) is **optional but recommended** for **prioritised**, **visual** trace of user stories alongside Spec Kit. It does **not** replace `spec.md`, `plan.md`, or task files; it **mirrors** them for granularity and communication.
+- **Single delivery window**: When scope or acceptance changes, update **`spec.md` / `plan.md` / tasks`** and, if present, **`tools/storymap/backlog/*.json`** in the **same** change set or PR so the three layers do not diverge.
+
 ## Tech Stack
 - **Language**: Rust (Stable)
 - **Package Manager**: `cargo`
@@ -129,14 +137,14 @@ These rules align delivery with **build once, promote many** and **twelve-factor
 - **Database**: PostgreSQL with `sqlx`
 
 ## Development Workflow
-1. **Specify**: Define requirements in `specify/spec.md`.
-2. **Plan**: Define architecture in `specify/plan.md`.
-3. **Tasks**: Break down execution in the feature task list (Spec Kit `/speckit.tasks` or `specify/tasks/`), with each task traceable to a user story or spec clause (XII). Where useful, tag tasks with the layers touched (for example DB, API, FE) to make XIV review explicit.
+1. **Specify**: Define requirements in `specify/spec.md` (**§2 Epics**, **§7 User Stories**, domain sections).
+2. **Plan**: Define architecture and **§2 milestone prioritisation** (user stories per milestone) in `specify/plan.md`; maintain **`specify/traceability.md`** when **US** membership or **`T###`** sets change.
+3. **Tasks**: Break down execution into **elementary technical tasks** in the feature task list (Spec Kit `/speckit.tasks` or `specify/tasks/`), each traceable to **`plan.md` §2** and **exactly one** **User Story** (**`US.1`–`US.15`**, **`spec.md` §7**) plus **Epic** (XII). Tag layers (DB, API, FE) for XIV. **Optional**: **`tools/storymap/backlog/*.json`** with **one card per `userStoryId`** and **`refs`** listing **`T###`** (**XVI**); run **`npm run check:english`** under `tools/storymap/web/` when that JSON changes.
 4. **Checklist / Analyze** (recommended before implementation): Run `/speckit.checklist` and/or `/speckit.analyze` to validate spec, plan, tasks, and **XIV layer gates** for the slice.
 5. **Implement**: Short, testable iterations; `cargo check` and `cargo test` on affected code.
-6. **Done**: Confirm XIV for every touched layer; update spec/plan/tasks if reality justified a change (XII).
+6. **Done**: Confirm XIV for every touched layer; update spec/plan/tasks if reality justified a change (XII); update **`tools/storymap/backlog/*.json`** when that backlog is maintained (**XVI**).
 7. **Release (CD)**: Ship only **immutable, promoted artifacts** per XV; inject environment-specific settings and secrets at deploy time, never by rebuilding a differently configured package for the same release identifier.
 
-**Version**: 1.4.0 | **Ratified**: 2026-04-09 | **Last Amended**: 2026-04-13 | **Changes**: Added XV immutable artifact, promotion pipeline, and externalized configuration (CI/CD); release step in Development Workflow.
+**Version**: 1.8.0 | **Ratified**: 2026-04-09 | **Last Amended**: 2026-04-22 | **Changes**: **One US ↔ one milestone** — `US.x` ids extended to **`US.1`–`US.15`** (split themes across milestones into separate `US.x`); story map enforces **one card per `userStoryId`** and rejects cross-milestone reuse (**XII** / **XVI**). Prior **1.7.1**: one card per (`milestoneId`, `userStoryId`); `refs` list `T###`. Prior **1.7.0**: `US.1`–`US.10`; each `T###` maps to exactly one `US.x`; story map v2.
 
 **Spec Kit**: The ratified constitution lives in `specify/constitution.md` and is **mirrored** at `.specify/memory/constitution.md` for Spec Kit (`/speckit.plan`, `/speckit.analyze`, etc.). The two files must stay identical; amend both on every constitution change.

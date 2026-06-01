@@ -127,6 +127,23 @@ fe-lint:
 	cd frontend && npm run lint
 
 # ---------------------------------------------------------------------------
+# Story map (tools/storymap/web — Vite + TS, port 5190)
+# ---------------------------------------------------------------------------
+.PHONY: storymap-install storymap-dev storymap-build storymap-check-english
+
+storymap-install:
+	cd tools/storymap/web && npm install
+
+storymap-dev:
+	cd tools/storymap/web && npm run dev
+
+storymap-build:
+	cd tools/storymap/web && npm run build
+
+storymap-check-english:
+	cd tools/storymap/web && npm run check:english
+
+# ---------------------------------------------------------------------------
 # Deploy stubs (replace bodies with gh / kubectl / your CD tool)
 # ---------------------------------------------------------------------------
 REF ?= latest

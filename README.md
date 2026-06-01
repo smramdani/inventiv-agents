@@ -19,7 +19,7 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 - **Multi-Tenancy**: Built-in isolation for organizations using Postgres RLS.
 - **Identity & RBAC**: Advanced role management (Owner, Admin, User) with SSO (Google/GitHub/SAML) support.
 - **Registry (M3)**: Admin/Owner REST API for LLM providers, MCP/native skills, agents, and agent–skill links (`/org/providers`, `/org/skills`, `/org/agents`).
-- **Internationalization**: Native support for English, French, and Arabic.
+- **Internationalization**: The product supports multiple **account/UI locales** (e.g. English, French, Arabic) through application-level i18n. **Repository** prose — Spec Kit, roadmaps, README, CHANGELOG, tooling backlogs — is **English only**; do not use other languages there except in examples of locale codes.
 - **Observability**: Systematic logging, metrics, and telemetry for full execution traceability.
 - **Marketplace Ready**: Foundation for cross-organization model and skill sharing.
 
@@ -28,12 +28,13 @@ Many SMEs want to adopt AI but struggle with security, data isolation, and compl
 | Path | Role |
 |------|------|
 | **`backend/`** | API Rust (`Cargo.toml`, `src/`, `tests/`, `migrations/`). |
-| **`frontend/`** | Cockpit Vite + React (**M5a**) — `npm run dev` ou `make fe-dev` ; voir `frontend/README.md`. |
-| **Racine** | Spec Kit (`specify/`, `.specify/`), Docker Compose, `Makefile`, `scripts/`, `README`, `CHANGELOG`. |
+| **`frontend/`** | Cockpit Vite + React (**M5a**): `npm run dev` or `make fe-dev`; see `frontend/README.md`. |
+| **`tools/storymap/`** | Local story map (JSON backlog + Vite/TS viewer, port **5190**): `make storymap-install` then `make storymap-dev`; see `tools/storymap/README.md`. |
+| **Repository root** | Spec Kit (`specify/`, `.specify/`), Docker Compose, `Makefile`, `scripts/`, `README`, `CHANGELOG`. |
 
-Les commandes **`make`** / **`./scripts/dev/dev.sh`** exécutent **cargo** dans `backend/` automatiquement. **`./scripts/dev/with-env.sh cargo …`** en fait autant lorsque la première commande est `cargo`.
+**`make`** and **`./scripts/dev/dev.sh`** run **cargo** from **`backend/`** automatically. **`./scripts/dev/with-env.sh cargo …`** does the same whenever the first command is `cargo`.
 
-**Cockpit (front)** : depuis la racine, `make fe-install` puis `make fe-dev` (API sur `8080` par défaut). CORS côté API : variable **`INVENTIV_CORS_ORIGINS`** (voir `.env.example`) ; le front peut fixer **`VITE_API_BASE`** dans `frontend/.env.local`. Périmètre **M5a** (chat éphémère, sans sessions persistées) vs **M5b** : voir **`specify/spec.md` §5–7** et **`specify/tasks/005_milestone_5.md`**.
+**Cockpit (frontend)**: from the repo root, `make fe-install` then `make fe-dev` (API on **`8080`** by default). API CORS: set **`INVENTIV_CORS_ORIGINS`** (see `.env.example`); the frontend can set **`VITE_API_BASE`** in `frontend/.env.local`. **M5a** scope (single-turn cockpit chat) vs **M5b** (persisted sessions): see **`specify/spec.md` §6–8**, **`specify/plan.md` §2**, and **`specify/tasks/005_milestone_5.md`**.
 
 ## 🛠 Tech Stack
 
@@ -92,14 +93,14 @@ Les commandes **`make`** / **`./scripts/dev/dev.sh`** exécutent **cargo** dans 
    ```bash
    ./scripts/dev/dev.sh run
    ```
-   Équivalent manuel depuis la racine : `set -a && source .env && set +a && cd backend && cargo run`.
+   Manual equivalent from the repo root: `set -a && source .env && set +a && cd backend && cargo run`.
 
 6. **Run tests** (integration tests use `DATABASE_URL` from `.env`, defaulting to `127.0.0.1:5432` and the `inventiv_app` role).  
    DB integration tests use a **shared named lock** (`serial_test`) so `cargo test` stays safe against one Docker Postgres:
    ```bash
    ./scripts/dev/dev.sh test
    ```
-   Ou : `set -a && source .env && set +a && ./scripts/dev/with-env.sh cargo test`.
+   Or: `set -a && source .env && set +a && ./scripts/dev/with-env.sh cargo test`.
 
 7. **One-shot local check** (starts Compose, migrates, runs `cargo test` + release build):
    ```bash
@@ -126,7 +127,7 @@ Use one entry point so every machine runs the same sequence (Docker up, optional
 | `make delete` | Same as `make reset` — **destroys** local DB volume, then migrates. |
 | `make test-unit` | Same as `make test-lib` — unit tests only, no Docker. |
 | `make fmt` / `make lint` | Format / Clippy only. |
-| `make clean` | `cargo clean` dans `backend/`. |
+| `make clean` | `cargo clean` in `backend/`. |
 | `make deploy-staging` / `make deploy-prod` | Stubs (`REF=…`, default `latest`); wire to your CI/CD. |
 
 | Goal | Script | Make (equivalent) |

@@ -2,7 +2,7 @@
 
 Vite + React + TypeScript SPA: authentication (`/auth/login`, `/auth/whoami`), organization registration (`/org/register`), **Registry** (Owner/Admin: providers, skills, agents), **ephemeral** SSE chat to `POST /org/agents/:id/complete/stream`, last **`usage`** event display.
 
-**Scope**: **M5a** only — no persisted server-side sessions. **M5b** (sessions, group sharing) and full **US.5** on persisted `metrics` are defined in **`../specify/spec.md` §5–7** and **`../specify/tasks/005_milestone_5.md`**.
+**Scope**: **M5a** ships **single-turn** cockpit chat; **M5b** adds persisted server-side sessions and group sharing; full **US.8** on persisted `metrics` follows **M4b** + **M5b**. See **`../specify/spec.md` §6–8**, **`../specify/plan.md` §2**, and **`../specify/tasks/005_milestone_5.md`**.
 
 ## Prerequisites
 

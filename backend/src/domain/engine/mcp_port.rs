@@ -47,7 +47,7 @@ pub trait McpInvocationPort: Send + Sync {
     async fn invoke(&self, req: McpInvokeRequest) -> Result<McpInvokeResult, McpInvocationError>;
 }
 
-/// Validates an invoke request before transport (T4.12).
+/// Validates an invoke request before transport (**T026**).
 pub fn validate_mcp_invoke_request(req: &McpInvokeRequest) -> Result<(), McpInvocationError> {
     let name = req.tool_name.trim();
     if name.is_empty() {
@@ -58,7 +58,7 @@ pub fn validate_mcp_invoke_request(req: &McpInvokeRequest) -> Result<(), McpInvo
     Ok(())
 }
 
-/// Trivial tool-selection slice (M4b / T4.11): if the server exposes exactly one tool, use it.
+/// Trivial tool-selection slice (M4b / **T025**): if the server exposes exactly one tool, use it.
 /// Otherwise returns [`None`] so orchestration must disambiguate.
 pub fn select_unique_tool_name(tools: &[McpToolDefinition]) -> Option<String> {
     if tools.len() == 1 {

@@ -50,12 +50,12 @@ Use a **test** API key and model on your provider (never commit secrets).
 
 ## Explicitly **out of scope** for this MVP gate
 
-- MCP tool list / invoke in the **product** path (`T4.10`–`T4.12`) — **M4b after M5** (see `specify/plan.md`).
-- Reasoning-loop orchestration with tool branches (`T4.16`+) — **M4b after M5**.
-- Persistence of runs / metrics tables (`T4.13`–`T4.15`) — **M4b after M5** (token counts already returned in SSE `usage` event).
+- MCP tool list / invoke in the **product** path (`T024`–`T026`) — **M4b after M5** (see `specify/plan.md`).
+- Reasoning-loop orchestration with tool branches (`T030`+) — **M4b after M5**.
+- Persistence of runs / metrics tables (`T027`–`T029`) — **M4b after M5** (token counts already returned in SSE `usage` event).
 
 ## Sign-off
 
 - **Owner / Tech lead**: name, date — MVP engine (no tools, no MCP) validated: **yes / no**.
 
-When **yes**, proceed to **M5** (cockpit) per **`specify/tasks/005_milestone_5.md`** and `specify/plan.md` — start with **M5a** (ephemeral UI); **M5b** adds §5 sessions. **M4b** (MCP + tools in loop + persistence) follows **after M5** on the roadmap.
+When **yes**, proceed to **M5** (cockpit) per **`specify/tasks/005_milestone_5.md`** and `specify/plan.md` — start with **M5a** (ephemeral UI); **M5b** adds **§6** sessions (`specify/spec.md`). **M4b** (MCP + tools in loop + persistence) follows **after M5** on the roadmap.

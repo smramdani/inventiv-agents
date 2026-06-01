@@ -1,0 +1,22 @@
+{
+  "name": "@inventivagents/storymap-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/sync-public-backlog.mjs && node scripts/sync-spec-kit.mjs",
+    "prebuild": "node scripts/sync-public-backlog.mjs && node scripts/sync-spec-kit.mjs && node scripts/verify-storymap-english.mjs",
+    "check:english": "node scripts/verify-storymap-english.mjs",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "marked": "^15.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.11"
+  }
+}

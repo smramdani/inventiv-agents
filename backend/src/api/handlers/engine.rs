@@ -28,7 +28,7 @@ pub struct AgentStreamCompleteRequest {
     pub max_tokens: Option<u32>,
 }
 
-/// SSE contract (Milestone 4, Spec Kit T4.7):
+/// SSE contract (Milestone 4, Spec Kit **T021**):
 ///
 /// - **`Content-Type`**: `text/event-stream`
 /// - **`event: meta`** — first frame. JSON: `{ "trace_id": "<uuid>" }` (mirrors `X-Trace-ID`).

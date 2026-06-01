@@ -4,9 +4,10 @@ This note complements **Constitution VIII** (tests) and **XIV** (layer gates). I
 
 ## Every milestone (always)
 
-- After each **task group / PR**: `make check` or at least `cargo test` (unit + integration where Docker is available). After **`frontend/`** changes: also **`make fe-lint`** (and **`make fe-build`** before release).
+- After each **task group / PR**: `make check` or at least `cargo test` (unit + integration where Docker is available). After **`frontend/`** changes: also **`make fe-lint`** (and **`make fe-build`** before promoting a **Constitution XV** artifact).
 - After changes to **`scripts/dev/lib.sh`** or Docker-related workflows: **`make verify-bootstrap`** (stubbed `docker` / stripped `PATH`; no daemon required).
 - Before calling a milestone **done**: satisfy the **Validation** section in that milestone’s task file (e.g. `specify/tasks/003_milestone_3.md`, `004_milestone_4.md`).
+- When **`specify/spec.md`**, **`specify/plan.md`**, or **`specify/tasks/*.md`** change user-visible scope or acceptance, align **`tools/storymap/backlog/inventivagents.json`** (or the active backlog) in the **same** PR where applicable: **one card per `userStoryId`** (each US is bound to one milestone — split into a new `US.x` if the theme moves milestone), English prose, **`refs`** listing every **`T###`** in scope (**Constitution XVI**). Run **`make storymap-check-english`** or **`npm run check:english`** from `tools/storymap/web/` when that JSON changes.
 
 ## M1–M3 (foundation + registry) — already shipped
 
@@ -29,7 +30,7 @@ Follow **`specify/mvp-engine-validation.md`** for the full checklist and sign-of
 
 ## M5 (cockpit) — **current priority**
 
-Tasks and phased scope: **`specify/tasks/005_milestone_5.md`**. Product wording: **`specify/spec.md` §5–7** (**M5a** vs **M5b**).
+Tasks and phased scope: **`specify/tasks/005_milestone_5.md`**. Product wording: **`specify/spec.md` §6–8** and **`specify/plan.md` §2** (**M5a** vs **M5b**).
 
 ### M5a (cockpit v1 — shipped)
 
@@ -44,8 +45,8 @@ Tasks and phased scope: **`specify/tasks/005_milestone_5.md`**. Product wording:
 
 | Step | Action |
 |------|--------|
-| After **T5.7–T5.10** | Full `make check`; manual **two-user / two-browser** sharing smoke when session APIs exist; RLS assertions per org/group. |
-| After **T5.11** | Spot-check **US.5**-style views once **persisted metrics** exist (**M4b** Phase 5+). |
+| After **T047–T052** (US.11 + US.9) | Full `make check`; deliver **T050–T051** before **T052** per `005_milestone_5.md`; manual **two-user / two-browser** sharing smoke when session APIs exist; RLS assertions per org/group. |
+| After **T053–T054** (US.13) | Spot-check Owner dashboards once the **US.14** persisted metrics read API exists (**M4b** Phase 5+). |
 
 ### Later (cross-cutting)
 

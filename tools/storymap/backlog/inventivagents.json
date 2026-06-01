@@ -1,0 +1,432 @@
+{
+  "meta": {
+    "title": "InventivAgents \u2014 Story map",
+    "formatVersion": 2,
+    "description": "Columns = Epics (`epicId` \u2192 `specify/spec.md` \u00a72); swimlanes = milestones. Each **user story** (`userStoryId`) appears on **exactly one card** \u2014 a US belongs to one Epic and one milestone. If a theme spans milestones, it is **split into different `US.x`** (`US.7` cockpit chat \u00b7 `US.11` persisted sessions \u00b7 `US.12` tool-augmented chat). **Technical tasks** (`T###`) are listed on the card (`refs`) and in the card modal \u2014 many tasks per card. Matrix: `specify/traceability.md`."
+  },
+  "personas": [
+    {
+      "id": "owner",
+      "label": "Owner",
+      "emoji": "\ud83d\udc51",
+      "description": "Org + billing + governance"
+    },
+    {
+      "id": "admin",
+      "label": "Admin",
+      "emoji": "\ud83d\udee0\ufe0f",
+      "description": "Registry, agents, invites"
+    },
+    {
+      "id": "user",
+      "label": "User",
+      "emoji": "\ud83d\udcac",
+      "description": "Chat with authorized agents"
+    },
+    {
+      "id": "maintainer",
+      "label": "Maintainer",
+      "emoji": "\ud83d\udd27",
+      "description": "Platform engineer (onboarding, kernel, MCP loop, persisted runs)"
+    }
+  ],
+  "columns": [
+    {
+      "id": "onboard",
+      "label": "Onboard",
+      "order": 0,
+      "epicId": "E-ONB",
+      "description": "First org + runnable product surface"
+    },
+    {
+      "id": "auth",
+      "label": "Auth & identity",
+      "order": 1,
+      "epicId": "E-AUTH",
+      "description": "Session, JWT, role from whoami"
+    },
+    {
+      "id": "registry",
+      "label": "Registry",
+      "order": 2,
+      "epicId": "E-REG",
+      "description": "Providers, skills, agents"
+    },
+    {
+      "id": "chat",
+      "label": "Agent chat",
+      "order": 3,
+      "epicId": "E-CHAT",
+      "description": "SSE turns; later persisted sessions"
+    },
+    {
+      "id": "usage",
+      "label": "Usage & cost",
+      "order": 4,
+      "epicId": "E-USAGE",
+      "description": "Last-turn usage \u2192 metrics dashboards"
+    },
+    {
+      "id": "governance",
+      "label": "Governance",
+      "order": 5,
+      "epicId": "E-GOV",
+      "description": "Invites, groups, sharing rules"
+    },
+    {
+      "id": "engine",
+      "label": "Agentic engine",
+      "order": 6,
+      "epicId": "E-ENG",
+      "description": "Migrations, MCP loop, metrics, orchestration"
+    }
+  ],
+  "cards": [
+    {
+      "id": "m5a-us1-onboarding",
+      "columnId": "onboard",
+      "title": "Organization onboarding",
+      "status": "shipped",
+      "personaIds": ["owner", "maintainer"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.1",
+      "refs": [
+        {"label": "T033", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T034", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T046", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Owner (or maintainer onboarding the tenant)",
+        "iWant": "to create my organization once and land in a documented, runnable cockpit + API layout",
+        "soThat": "every subsequent user and dataset is scoped to `organization_id` and contributors share one dev/build path",
+        "definitionOfDone": [
+          "Cockpit shell + register org + documented `fe-*` / Make targets; see `spec.md` \u00a77.11 (M5a) and `005_milestone_5.md`."
+        ],
+        "acceptanceCriteria": [
+          "Given a fresh clone, when I follow README, then I can register an org and run API + cockpit dev.",
+          "Given shipped tasks T033\u2013T034\u2013T046, when I trace in `traceability.md`, then each maps to **US.1** only."
+        ]
+      }
+    },
+    {
+      "id": "m5a-us2-identity",
+      "columnId": "auth",
+      "title": "Authenticated identity",
+      "status": "shipped",
+      "personaIds": ["owner", "admin", "user"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.2",
+      "refs": [
+        {"label": "T035", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T036", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Org member",
+        "iWant": "to sign in and have the client resolve my role for API and UI gates",
+        "soThat": "Owner, Admin, and User capabilities stay enforced consistently",
+        "definitionOfDone": ["Login + `GET /auth/whoami` with role consumed by cockpit (`005_milestone_5.md`)."],
+        "acceptanceCriteria": [
+          "Given valid credentials, when I log in, then the UI loads role-aware navigation.",
+          "Each technical task (**T035**, **T036**) cites **US.2** and **E-AUTH** only."
+        ]
+      }
+    },
+    {
+      "id": "m5a-us3-providers",
+      "columnId": "registry",
+      "title": "Sovereign LLM provider catalog",
+      "status": "shipped",
+      "personaIds": ["owner", "admin"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.3",
+      "refs": [
+        {"label": "T006", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T010", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T037", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T038", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Admin or Owner",
+        "iWant": "to register and manage managed LLM providers (URL, credentials) in my org catalog",
+        "soThat": "agents resolve sovereign endpoints under our keys and residency choices",
+        "definitionOfDone": ["Cockpit list + create flows call M3 org-scoped APIs."],
+        "acceptanceCriteria": ["Given an admin JWT, when I create a provider, then it appears in the list for the same org only."]
+      }
+    },
+    {
+      "id": "m5a-us4-skills",
+      "columnId": "registry",
+      "title": "MCP-backed skill catalog",
+      "status": "shipped",
+      "personaIds": ["admin"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.4",
+      "refs": [
+        {"label": "T007", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T011", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T039", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T040", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Admin",
+        "iWant": "to register Skills (including MCP-backed) the org can attach to agents",
+        "soThat": "governed tool surfaces are reusable, not one-off integrations",
+        "definitionOfDone": ["List + create skill in cockpit against M3."],
+        "acceptanceCriteria": ["Given admin, when I add a skill, then it is listed for agent configuration."]
+      }
+    },
+    {
+      "id": "m5a-us5-agents",
+      "columnId": "registry",
+      "title": "Mission-driven agent catalog",
+      "status": "shipped",
+      "personaIds": ["admin"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.5",
+      "refs": [
+        {"label": "T008", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T012", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T041", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T042", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Admin",
+        "iWant": "to define Agents (mission, persona, LLM choice, allowed skills)",
+        "soThat": "users run consistent, policy-bound assistants",
+        "definitionOfDone": ["List + create agent; selectable in chat."],
+        "acceptanceCriteria": ["Given configured agent, when User opens chat, then agent id is available for SSE completion."]
+      }
+    },
+    {
+      "id": "m5a-us6-tenant-registry",
+      "columnId": "registry",
+      "title": "Tenant-safe registry platform",
+      "status": "shipped",
+      "personaIds": ["owner", "admin"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.6",
+      "refs": [
+        {"label": "T009", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T013", "path": "specify/tasks/003_milestone_3.md"},
+        {"label": "T014", "path": "specify/tasks/003_milestone_3.md"}
+      ],
+      "story": {
+        "asA": "Admin or Owner",
+        "iWant": "providers, skills, and agents persisted with RLS and served through org-scoped repository and HTTP APIs",
+        "soThat": "no tenant can read or mutate another tenant\u2019s registry rows",
+        "definitionOfDone": ["M3 migrations + repositories; cockpit uses org-scoped list/create only."],
+        "acceptanceCriteria": ["Cross-tenant denial covered by integration tests and RLS policies per `003_milestone_3.md`."]
+      }
+    },
+    {
+      "id": "m5a-us7-chat",
+      "columnId": "chat",
+      "title": "Streamed single-turn agent chat (cockpit)",
+      "status": "shipped",
+      "personaIds": ["user"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.7",
+      "refs": [
+        {"label": "T016", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T021", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T022", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T023", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T043", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "User",
+        "iWant": "to send a prompt to a configured agent and receive a streamed response in the cockpit",
+        "soThat": "I can use sovereign agents from the browser without bespoke integrations",
+        "definitionOfDone": ["Cockpit calls `POST /org/agents/:id/complete/stream` (SSE) using the M4a kernel; deltas + terminal `usage`/`done` render."],
+        "acceptanceCriteria": ["Given agent + JWT, when I send a prompt, then deltas and terminal `usage`/`done` render."]
+      }
+    },
+    {
+      "id": "m5a-us8-usage",
+      "columnId": "usage",
+      "title": "Last-turn usage signal in the cockpit",
+      "status": "shipped",
+      "personaIds": ["owner"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.8",
+      "refs": [
+        {"label": "T020", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T044", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T045", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Owner",
+        "iWant": "the last `usage` payload from the SSE stream surfaced in the cockpit",
+        "soThat": "I get an immediate, read-only signal of token consumption per turn",
+        "definitionOfDone": ["Last non-null `usage` from SSE shown in Owner panel per `spec.md` \u00a74; no persisted dashboards in this US (see `US.13`)."],
+        "acceptanceCriteria": ["Given completion with usage payload, when stream ends, then panel shows token fields."]
+      }
+    },
+    {
+      "id": "m5a-us10-kernel",
+      "columnId": "engine",
+      "title": "Streaming LLM execution kernel",
+      "status": "shipped",
+      "personaIds": ["maintainer"],
+      "milestoneId": "M5a",
+      "userStoryId": "US.10",
+      "refs": [
+        {"label": "T015", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T017", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T018", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T019", "path": "specify/tasks/004_milestone_4.md"}
+      ],
+      "story": {
+        "asA": "Maintainer or platform engineer",
+        "iWant": "LLM streaming + contracts behind the cockpit (no MCP in product path)",
+        "soThat": "cockpit and API clients share one tested kernel for single-turn completions",
+        "definitionOfDone": ["Phases 1\u20133 of `004_milestone_4.md` shipped; see `mvp-engine-validation.md`. MCP + orchestrator are `US.15` (M4b)."],
+        "acceptanceCriteria": ["TraceID on stream; org-scoped provider resolution; integration tests green."]
+      }
+    },
+    {
+      "id": "m5b-us11-sessions",
+      "columnId": "chat",
+      "title": "Persisted multi-turn agent sessions + sharing",
+      "status": "planned",
+      "personaIds": ["user"],
+      "milestoneId": "M5b",
+      "userStoryId": "US.11",
+      "refs": [
+        {"label": "T047", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T048", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T049", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T052", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "User",
+        "iWant": "to resume prior conversations and share them with my group when policy allows",
+        "soThat": "work with agents survives reloads and can be continued by teammates",
+        "definitionOfDone": ["DB + API + FE per `plan.md` \u00a72.3.1\u20132.3.3 and `005_milestone_5.md`."],
+        "acceptanceCriteria": ["Two-browser sharing smoke passes; RLS enforced per org/group."]
+      }
+    },
+    {
+      "id": "m5b-us13-dashboards",
+      "columnId": "usage",
+      "title": "Owner usage dashboards on persisted metrics",
+      "status": "planned",
+      "personaIds": ["owner"],
+      "milestoneId": "M5b",
+      "userStoryId": "US.13",
+      "refs": [
+        {"label": "T053", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T054", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Owner",
+        "iWant": "dashboards on persisted metrics (tokens, optional cost) for my org",
+        "soThat": "I can steer budget and governance beyond a single SSE turn",
+        "definitionOfDone": ["Typed client + dashboard wired to the `US.14` read API once it ships (M4b Phase 5)."],
+        "acceptanceCriteria": ["Given metrics API, when Owner opens usage, then aggregates render without cross-tenant leakage."]
+      }
+    },
+    {
+      "id": "m5b-us9-governance",
+      "columnId": "governance",
+      "title": "People & access structure",
+      "status": "planned",
+      "personaIds": ["owner", "admin"],
+      "milestoneId": "M5b",
+      "userStoryId": "US.9",
+      "refs": [
+        {"label": "T050", "path": "specify/tasks/005_milestone_5.md"},
+        {"label": "T051", "path": "specify/tasks/005_milestone_5.md"}
+      ],
+      "story": {
+        "asA": "Admin or Owner",
+        "iWant": "to manage invites, groups, and membership boundaries",
+        "soThat": "collaboration scales without breaking tenant isolation intent",
+        "definitionOfDone": ["Invite + groups cockpit flows with RBAC per `005_milestone_5.md`."],
+        "acceptanceCriteria": ["Given Owner/Admin, when I invite or edit a group, then errors never echo secrets."]
+      }
+    },
+    {
+      "id": "m4b-us12-tool-chat",
+      "columnId": "chat",
+      "title": "Tool-augmented orchestrated agent chat",
+      "status": "planned",
+      "personaIds": ["user"],
+      "milestoneId": "M4b",
+      "userStoryId": "US.12",
+      "refs": [],
+      "story": {
+        "asA": "User",
+        "iWant": "streamed completions that may call governed tools (MCP skills) through an orchestrated path",
+        "soThat": "configured agents can act on data and systems within the policy boundary",
+        "definitionOfDone": ["Ships on top of the `US.15` orchestrated kernel and `US.4` skills; covered by Phase 6 validation in `004_milestone_4.md` and the testing checkpoints (M4b)."],
+        "acceptanceCriteria": ["Given an agent with skills attached, when I prompt it, then the cockpit streams the response and any tool steps stay within the auditable run row."]
+      }
+    },
+    {
+      "id": "m4b-us14-runs-metrics",
+      "columnId": "usage",
+      "title": "Persisted runs and token metrics ground truth",
+      "status": "planned",
+      "personaIds": ["maintainer", "owner"],
+      "milestoneId": "M4b",
+      "userStoryId": "US.14",
+      "refs": [
+        {"label": "T027", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T028", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T029", "path": "specify/tasks/004_milestone_4.md"}
+      ],
+      "story": {
+        "asA": "Maintainer / Owner",
+        "iWant": "execution runs and token metrics persisted with RLS, and exposed via an org-scoped read API",
+        "soThat": "reporting reflects real, auditable multi-tenant usage and unlocks the `US.13` dashboards",
+        "definitionOfDone": ["Migrations + repository + read API for runs/metrics per Phase 5; `set_rls_context` on every path."],
+        "acceptanceCriteria": ["Integration test: org A cannot read org B execution rows; documented read API consumed by `US.13`."]
+      }
+    },
+    {
+      "id": "m4b-us15-mcp-orchestrator",
+      "columnId": "engine",
+      "title": "MCP execution + orchestrated streaming kernel",
+      "status": "planned",
+      "personaIds": ["maintainer"],
+      "milestoneId": "M4b",
+      "userStoryId": "US.15",
+      "refs": [
+        {"label": "T024", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T025", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T026", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T030", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T031", "path": "specify/tasks/004_milestone_4.md"},
+        {"label": "T032", "path": "specify/tasks/004_milestone_4.md"}
+      ],
+      "story": {
+        "asA": "Maintainer or platform engineer",
+        "iWant": "the engine to run MCP `tools/call` in the reasoning loop, with an orchestrator service and persisted run linkage behind a documented streaming entry route",
+        "soThat": "tool-using agents from `US.5` / `US.4` are exercised consistently across cockpit and API clients",
+        "definitionOfDone": ["Phases 4 + 6 of `004_milestone_4.md` integrated; entry route + env vars documented (`T031`/`T032`); pairs with `US.14` for persisted metrics."],
+        "acceptanceCriteria": ["Optional tool path + orchestrator happy path covered by integration tests per milestone file."]
+      }
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M5a",
+      "label": "M5a \u2014 Cockpit v1",
+      "order": 1,
+      "color": "#5b8def"
+    },
+    {
+      "id": "M5b",
+      "label": "M5b \u2014 Sessions \u00a75",
+      "order": 2,
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "M4b",
+      "label": "M4b \u2014 Tools & metrics",
+      "order": 3,
+      "color": "#3ecf8e"
+    }
+  ]
+}

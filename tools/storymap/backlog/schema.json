@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inventivagents.local/storymap/backlog/v2",
+  "title": "Story map backlog (v2)",
+  "type": "object",
+  "required": ["meta", "columns", "milestones", "cards"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "formatVersion"],
+      "properties": {
+        "title": { "type": "string" },
+        "formatVersion": { "type": "integer", "const": 2 },
+        "description": { "type": "string" }
+      }
+    },
+    "personas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "emoji": {
+            "type": "string",
+            "description": "Optional pictogram (e.g. emoji) for chips and card persona row"
+          },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "order"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "order": { "type": "integer" },
+          "description": { "type": "string" },
+          "epicId": {
+            "type": "string",
+            "description": "Optional id matching `specify/spec.md` §2 Epics (e.g. E-ONB); shown in viewer column header"
+          }
+        }
+      }
+    },
+    "milestones": {
+      "type": "array",
+      "description": "Horizontal swimlanes — same concept as milestones in `specify/plan.md` §2 (not Constitution XV software release artifacts).",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "order"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "order": { "type": "integer" },
+          "color": { "type": "string", "description": "CSS color for ribbon/badge" }
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "columnId", "title", "milestoneId"],
+        "properties": {
+          "id": { "type": "string" },
+          "columnId": { "type": "string", "description": "Must match columns[].id" },
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "milestoneId": { "type": "string", "description": "Must match milestones[].id" },
+          "userStoryId": {
+            "type": ["string", "null"],
+            "description": "`US.1`–`US.15` from `specify/spec.md` §7. Each US belongs to exactly one milestone, so each `userStoryId` must appear on at most one card per backlog file (validator rejects duplicates and cross-milestone reuse)."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "in_progress", "shipped", "deferred"]
+          },
+          "personaIds": { "type": "array", "items": { "type": "string" } },
+          "story": {
+            "type": "object",
+            "description": "User story + acceptance; Spec Kit markdown under specify/ loaded in modal",
+            "properties": {
+              "specPaths": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Repo-relative specify/*.md (merged with refs paths)"
+              },
+              "asA": { "type": "string" },
+              "iWant": { "type": "string" },
+              "soThat": { "type": "string" },
+              "explanationMarkdown": { "type": "string" },
+              "businessRules": { "type": "array", "items": { "type": "string" } },
+              "definitionOfDone": { "type": "array", "items": { "type": "string" } },
+              "acceptanceCriteria": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label"],
+              "properties": {
+                "label": { "type": "string" },
+                "path": { "type": "string" },
+                "url": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

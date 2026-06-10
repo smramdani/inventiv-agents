@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-01
+
 ### Added
 - **Story map mini-tool (`tools/storymap/`)**: JSON backlog + JSON Schema, Vite + TypeScript viewer (port **5190**), and docs (`docs/format.md`, `docs/renderer.md`). Root **`make storymap-install` / `storymap-dev` / `storymap-build`**; sample data `backlog/inventivagents.json`. **Runtime backlog** via **`?file=`** / **`?backlog=`** (`fetch` + `public/backlog/` sync); **`backlog/template.min.json`** starter; client-side **`assertStoryMapData`** validation. **UI**: horizontal **release swimlanes** (code, name, color) full width, grid aligned on backbone columns (replacing the old column-only stack + legend). **Personas**: optional **`emoji`** on each persona (chips + compact row on cards; letter fallback if no emoji). **Card modal (User Story + Spec Kit)**: click a card for **As / I want / So that**, rules, DoD, acceptance criteria, code refs, and **Markdown tabs** loaded from **`specify/`** (synced to `public/spec-kit/` via **`sync-spec-kit.mjs`**; **`marked`**); backlog **`story`** field + auto-link **`refs[].path`** when `specify/*.md`.
 - **M5 cockpit (`frontend/`)**: Vite + React + TypeScript SPA — login/register, **Registry** (providers/skills/agents for Owner/Admin), **Chat** with `fetch` + SSE parser for **`POST /org/agents/:id/complete/stream`**, last **`usage`** display; JWT in **sessionStorage**. Root **`make fe-install` / `fe-dev` / `fe-build` / `fe-lint`**.

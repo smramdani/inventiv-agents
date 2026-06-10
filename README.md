@@ -1,6 +1,6 @@
 # InventivAgents
 
-**Enterprise-Ready Open Source Agentic AI Platform (v0.1.2)**
+**Enterprise-Ready Open Source Agentic AI Platform (v0.1.3)**
 
 InventivAgents is a high-performance, secure, and user-friendly platform designed for SMEs to deploy, manage, and scale AI agents within their organization. Built with **Rust**, it prioritizes safety, modularity, and control.
 
@@ -235,4 +235,4 @@ This project is Open Source under the **AGPL-3.0** license. We welcome contribut
 
 ---
 
-**Version**: 0.1.2 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5a** (cockpit v1 — **current**); **M5b** (sessions §5) next. **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `backend/src/infrastructure/mcp/` is library-only until then. Layout: `backend/` (API), `frontend/` (UI). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.
+**Version**: 0.1.3 | **License**: AGPL-3.0 | **Status**: M3 registry + **M4a** (LLM + SSE) + **M5a** (cockpit v1 — **current**); **M5b** (sessions §5) next. **M4b** (MCP in product loop, persistence, orchestration) follows M5; HTTP MCP client in `backend/src/infrastructure/mcp/` is library-only until then. Layout: `backend/` (API), `frontend/` (UI). Local dev: Docker PATH bootstrap, host Postgres fallback, `make verify-bootstrap`, `make m4a-smoke`. Roadmap: `specify/plan.md`; tasks: `specify/tasks/005_milestone_5.md`, `specify/tasks/004_milestone_4.md`.
